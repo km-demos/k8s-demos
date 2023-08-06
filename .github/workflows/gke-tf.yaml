@@ -28,9 +28,9 @@ jobs:
     env:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
       TF_VAR_project: ${{ secrets.GCP_PROJECT }}
-      TF_VAR_cluster_name: ${{ env.CLUSTER_NAME }}
-      TF_VAR_region: ${{ env.GCP_REGION }}
-      TF_VAR_zone: ${{ env.GCP_ZONE }}
+      TF_VAR_cluster_name: ${{ github.env.CLUSTER_NAME }}
+      TF_VAR_region: ${{ github.env.GCP_REGION }}
+      TF_VAR_zone: ${{ github.env.GCP_ZONE }}
     defaults:
       run:
         working-directory: gke_tf
@@ -93,8 +93,8 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         uses: google-github-actions/get-gke-credentials@v1.0.2
         with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.GCP_REGION }}
+          cluster_name: ${{ github.env.CLUSTER_NAME }}
+          location: ${{ github.env.GCP_REGION }}
           credentials: ${{ secrets.GCP_SECRET }}
       
       - id: get-pods
