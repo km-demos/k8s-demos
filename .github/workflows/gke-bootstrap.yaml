@@ -46,9 +46,7 @@ jobs:
           project_id: ${{ env.GCP_PROJECT_ID }}
       
       - id: get-pods
-        run: | 
-          kubectl create clusterrolebinding myname-cluster-admin-binding --clusterrole=cluster-admin --user=$GCP_SA_EMAIL
-          kubectl get pods -A 
+        run: kubectl get pods -A 
       
       - name: test helm
         run: | 
