@@ -7,18 +7,31 @@ on:
         description: 'Name of GKE cluster to create'
         default: "demo-cluster"
       gcp-region:
+        type: choice
         description: 'GCP region to create cluster'
         default: "us-central1"
+        options:
+        - us-east5
+        - us-central1
+        - us-east4
+      gcp-zone:
+        type: choice
+        description: 'GCP zone to create cluster'
+        default: "a"
+        options: 
+        - a
+        - b
+        - c
 
 env:
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-c
+  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
   TF_VAR_cluster_name: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
   TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-c
+  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
   DNS_ZONE: demos-kurtmadel
   DNS_HOST: "*.demos.kurtmadel.com"
