@@ -74,8 +74,8 @@ jobs:
       - id: get-credentials
         uses: google-github-actions/get-gke-credentials@v1.0.2
         with:
-          cluster_name: ${{ github.env.CLUSTER_NAME }}
-          location: ${{ github.env.GCP_REGION }}
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.GCP_REGION }}
           credentials: ${{ secrets.GCP_SECRET }}
       
       - id: get-pods
