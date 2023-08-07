@@ -17,7 +17,6 @@ server:
     annotations: 
       cert-manager.io/cluster-issuer: letsencrypt-prod
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     # -- Additional ingress labels
     labels: {}
     # -- Defines which ingress controller will implement the resource
@@ -28,7 +27,7 @@ server:
     ## Hostnames must be provided if Ingress is enabled.
     ## Secrets must be manually created in the namespace
     hosts: 
-      - argocd.demos.kurtmadel.com
+      - argo-cd.demos.kurtmadel.com
 
     # -- List of ingress paths
     paths:
@@ -40,7 +39,7 @@ server:
     tls: 
       - secretName: argo-server
         hosts:
-          - argocd.demos.kurtmadel.com
+          - argo-cd.demos.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
@@ -80,7 +79,7 @@ server:
     ## Secrets must be manually created in the namespace
     ##
     hosts: 
-      - argocd-grpc.demos.kurtmadel.com
+      - argo-cd-grpc.demos.kurtmadel.com
 
     # -- List of ingress paths for dedicated [gRPC-ingress]
     paths:
@@ -92,7 +91,7 @@ server:
     tls: 
       - secretName: your-certificate-name
         hosts:
-          - argocd-grpc.demos.kurtmadel.com
+          - argo-cd-grpc.demos.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
