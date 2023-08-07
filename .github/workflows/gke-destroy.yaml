@@ -1,14 +1,14 @@
 name: "GKE Destroy"
 
 on:
-    workflow_dispatch:
-      inputs:
-        cluster-name:
-          description: 'Name of GKE cluster to create'
-          default: "demo-cluster"
-        gcp-region:
-          description: 'GCP region to create cluster'
-          default: "us-central1"
+  workflow_dispatch:
+    inputs:
+      cluster-name:
+        description: 'Name of GKE cluster to create'
+        default: "demo-cluster"
+      gcp-region:
+        description: 'GCP region to create cluster'
+        default: "us-central1"
 
 env:
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}

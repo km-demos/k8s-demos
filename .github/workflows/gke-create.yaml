@@ -21,7 +21,7 @@ env:
   TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-c
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
   DNS_ZONE: demos-kurtmadel
-  DNS_HOST: *.demos.kurtmadel.com
+  DNS_HOST: "*.demos.kurtmadel.com"
 
 jobs:
   terraform:
@@ -78,6 +78,7 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ secrets.SA_EMAIL }}
+
       - id: get-credentials
         uses: google-github-actions/get-gke-credentials@v1.0.2
         with:
