@@ -9,7 +9,7 @@ on:
       gcp-region:
         type: choice
         description: 'GCP region to create cluster'
-        default: "us-central1"
+        default: "us-east5"
         options:
         - us-east5
         - us-central1
