@@ -54,7 +54,7 @@ jobs:
         name: Create GCP storage bucket
         run: |
           gcloud storage buckets create gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
-          sed -i 's/REPLACE_BUCKET/${GCP_PROJECT_ID}-${CLUSTER_NAME}/' providers.tf
+          sed -i "s/REPLACE_BUCKET/${GCP_PROJECT_ID}-${CLUSTER_NAME}/g" providers.tf
 
       - name: Terraform Init
         id: init
