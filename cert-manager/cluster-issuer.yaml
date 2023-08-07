@@ -13,7 +13,10 @@ spec:
       name: letsencrypt-prod
     # Enable the HTTP-01 challenge provider
     solvers:
-    - dns01:
+    - selector:
+        dnsZones:
+        - 'kurtmadel.com'
+      dns01:
         cnameStrategy: Follow
         cloudDNS:
           # The ID of the GCP project
