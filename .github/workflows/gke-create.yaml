@@ -20,6 +20,8 @@ env:
   TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-central1' }}
   TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-c
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
+  DNS_ZONE: demos-kurtmadel
+  DNS_HOST: *.demos.kurtmadel.com
 
 jobs:
   terraform:
@@ -90,8 +92,18 @@ jobs:
         run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
-          helm upgrade --install --wait ingress-nginx ingress-nginx/ingress-nginx \
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
+      
+      - id: ingress-dns
+        run: |
+          INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
+          #delete existing record if it exists
+          gcloud dns --project=$GCP_PROJECT_ID record-sets delete $DNS_HOST. --type=A --zone=$DNS_ZONE
+          #create DNS entry for DNS_HOST above hostname to map to that IP
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
 
       - id: install-komodor-watcher
         env:
@@ -105,6 +117,17 @@ jobs:
               --set watcher.clusterName=default \
               --set watcher.actions.portforward=true --set watcher.resources.secret=true \
               --set watcher.enableHelm=true --set helm.enableActions=true --wait -n k8s-watcher --create-namespace
+
+      - id: install-argocd 
+        run: |
+          helm repo add argo https://argoproj.github.io/argo-helm
+          helm repo update
+          helm upgrade --install argo-cd argo/argo-cd \
+            -n argo-cd --create-namespace --version 5.42.2 --wait \
+            --set server.ingress.enabled=true \
+            --set server.ingress.ingressClassName="nginx" \
+            --set "server.ingress.hosts={argocd.demos.kurtmadel.com}" \
+            --set applicationSet.enabled=false
 
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 
