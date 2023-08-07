@@ -70,7 +70,7 @@ jobs:
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
             --version v1.12.3 \
             --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
-            --set extraArgs={--issuer-ambient-credentials=true} \
+            --set extraArgs={--issuer-ambient-credentials=true,--dns01-recursive-nameservers-only=true} \
             --set installCRDs=true --wait
 
           kubectl annotate serviceaccount --namespace=cert-manager cert-manager \
