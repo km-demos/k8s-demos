@@ -17,6 +17,7 @@ spec:
         cloudDNS:
           # The ID of the GCP project
           project: default-394913
+          hostedZoneName: examples-kurtmadel
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
