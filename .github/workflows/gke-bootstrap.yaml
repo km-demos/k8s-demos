@@ -72,11 +72,6 @@ jobs:
             --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
             --set extraArgs={--issuer-ambient-credentials=true} \
             --set installCRDs=true --wait
-            
-          gcloud iam service-accounts add-iam-policy-binding \
-            --role roles/iam.workloadIdentityUser \
-            --member "serviceAccount:$GPC_PROJECT_ID.svc.id.goog[cert-manager/cert-manager]" \
-            dns01-solver@$GPC_PROJECT_ID.iam.gserviceaccount.com
 
           kubectl annotate serviceaccount --namespace=cert-manager cert-manager \
             "iam.gke.io/gcp-service-account=dns01-solver@$GPC_PROJECT_ID.iam.gserviceaccount.com"
