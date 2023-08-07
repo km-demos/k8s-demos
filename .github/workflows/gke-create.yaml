@@ -100,7 +100,22 @@ jobs:
           credentials: ${{ secrets.GCP_SECRET }}
       
       - id: get-pods
-        run: kubectl get pods -A 
+        run: kubectl get pods -A  
+
+      - id: install-cert-manager
+        run: |
+          helm repo add cert-manager https://charts.jetstack.io
+          helm repo update
+          helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
+            --version v1.12.3 \
+            --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
+            --set extraArgs={--issuer-ambient-credentials=true} \
+            --set installCRDs=true --wait
+
+          kubectl annotate serviceaccount --namespace=cert-manager cert-manager \
+            "iam.gke.io/gcp-service-account=dns01-solver@$GPC_PROJECT_ID.iam.gserviceaccount.com"
+          
+          kubectl apply -f ./cert-manager/cluster-issuer.yaml
 
       - id: install-ingress-nginx 
         run: |
@@ -108,16 +123,6 @@ jobs:
           helm repo update
           helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
-      
-      - id: ingress-dns
-        run: |
-          INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
-          #delete existing record if it exists
-          gcloud dns --project=$GCP_PROJECT_ID record-sets delete $DNS_HOST. --type=A --zone=$DNS_ZONE
-          #create DNS entry for DNS_HOST above hostname to map to that IP
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
 
       - id: install-komodor-watcher
         env:
@@ -137,11 +142,7 @@ jobs:
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
           helm upgrade --install argo-cd argo/argo-cd \
-            -n argo-cd --create-namespace --version 5.42.2 --wait \
-            --set server.ingress.enabled=true \
-            --set server.ingress.ingressClassName="nginx" \
-            --set "server.ingress.hosts={argocd.demos.kurtmadel.com}" \
-            --set applicationSet.enabled=false
+            -n argo-cd --create-namespace --version 5.42.2 --wait --values ./argo-cd/values.yaml
 
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 
