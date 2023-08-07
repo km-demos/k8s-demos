@@ -87,4 +87,8 @@ resource "kubernetes_cluster_role_binding" "terraform-cluster-admin" {
     name      = "REPLACE_CLUSTER_ADMIN_USER"
     api_group = "rbac.authorization.k8s.io"
   }
+
+  depends_on = [
+    google_container_node_pool.primary_nodes
+  ]
 }
