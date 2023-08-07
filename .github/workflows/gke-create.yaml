@@ -14,17 +14,16 @@ env:
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-central1' }}
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-b
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  TF_VAR_project: ${{ secrets.GCP_PROJECT }}
+  TF_VAR_cluster_name: ${{ github.env.CLUSTER_NAME }}
+  TF_VAR_region: ${{ github.env.GCP_REGION }}
+  TF_VAR_zone: ${{ github.env.GCP_ZONE }}
 
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
-    env:
-      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-      TF_VAR_project: ${{ secrets.GCP_PROJECT }}
-      TF_VAR_cluster_name: ${{ github.env.CLUSTER_NAME }}
-      TF_VAR_region: ${{ github.env.GCP_REGION }}
-      TF_VAR_zone: ${{ github.env.GCP_ZONE }}
     permissions:
       id-token: write
       contents: read
@@ -87,7 +86,7 @@ jobs:
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
           helm upgrade --install --wait ingress-nginx ingress-nginx/ingress-nginx \
-              -n ingress-nginx --create-namespace --version 4.7.1 --wait
+            -n ingress-nginx --create-namespace --version 4.7.1 --wait
 
       - id: install-komodor-watcher
         env:
