@@ -1,0 +1,122 @@
+## Argo CD configuration
+## Ref: https://github.com/argoproj/argo-cd
+##
+
+## Server
+server:
+  # -- Argo CD server name
+  name: server
+
+  # -- The number of server pods to run
+  replicas: 1
+
+  ingress:
+    # -- Enable an ingress resource for the Argo CD server
+    enabled: true
+    # -- Additional ingress annotations
+    annotations: 
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    # -- Additional ingress labels
+    labels: {}
+    # -- Defines which ingress controller will implement the resource
+    ingressClassName: "nginx"
+
+    # -- List of ingress hosts
+    ## Argo Ingress.
+    ## Hostnames must be provided if Ingress is enabled.
+    ## Secrets must be manually created in the namespace
+    hosts: 
+      - argocd.demos.kurtmadel.com
+
+    # -- List of ingress paths
+    paths:
+      - /
+    # -- Ingress path type. One of `Exact`, `Prefix` or `ImplementationSpecific`
+    pathType: Prefix
+
+    # -- Ingress TLS configuration
+    tls: 
+      - secretName: argo-server
+        hosts:
+          - argocd.demos.kurtmadel.com
+
+    # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
+    https: true
+
+  # dedicated ingress for gRPC as documented at
+  # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
+  ingressGrpc:
+    # -- Enable an ingress resource for the Argo CD server for dedicated [gRPC-ingress]
+    enabled: true
+    # -- Setup up gRPC ingress to work with an AWS ALB
+    isAWSALB: false
+    # -- Additional ingress annotations for dedicated [gRPC-ingress]
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+
+    # -- Additional ingress labels for dedicated [gRPC-ingress]
+    labels: {}
+    # -- Defines which ingress controller will implement the resource [gRPC-ingress]
+    ingressClassName: "nginx"
+
+    awsALB:
+      # -- Service type for the AWS ALB gRPC service
+      ## Service Type if isAWSALB is set to true
+      ## Can be of type NodePort or ClusterIP depending on which mode you are
+      ## are running. Instance mode needs type NodePort, IP mode needs type
+      ## ClusterIP
+      ## Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/how-it-works/#ingress-traffic
+      serviceType: NodePort
+      # -- Backend protocol version for the AWS ALB gRPC service
+      ## This tells AWS to send traffic from the ALB using HTTP2. Can use gRPC as well if you want to leverage gRPC specific features
+      backendProtocolVersion: HTTP2
+
+    # -- List of ingress hosts for dedicated [gRPC-ingress]
+    ## Argo Ingress.
+    ## Hostnames must be provided if Ingress is enabled.
+    ## Secrets must be manually created in the namespace
+    ##
+    hosts: 
+      - argocd-grpc.demos.kurtmadel.com
+
+    # -- List of ingress paths for dedicated [gRPC-ingress]
+    paths:
+      - /
+    # -- Ingress path type for dedicated [gRPC-ingress]. One of `Exact`, `Prefix` or `ImplementationSpecific`
+    pathType: Prefix
+
+    # -- Ingress TLS configuration for dedicated [gRPC-ingress]
+    tls: 
+      - secretName: your-certificate-name
+        hosts:
+          - argocd-grpc.demos.kurtmadel.com
+
+    # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
+    https: true
+
+## Repo Server
+repoServer:
+  # -- Repo server name
+  name: repo-server
+
+  # -- The number of repo server pods to run
+  replicas: 1
+
+## ApplicationSet controller
+applicationSet:
+  # -- Enable ApplicationSet controller
+  enabled: false
+
+## Notifications controller
+notifications:
+  # -- Enable notifications controller
+  enabled: true
+
+  # -- Notifications controller name string
+  name: notifications-controller
+
+  # -- Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates
+  argocdUrl:
