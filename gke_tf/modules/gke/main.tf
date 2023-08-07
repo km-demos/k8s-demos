@@ -1,3 +1,7 @@
+# google_client_config and kubernetes provider must be explicitly specified like the following.
+# Retrieve an access token as the Terraform runner
+data "google_client_config" "default" {}
+
 data "google_compute_network" "default" {
   name = "default"
 }
@@ -60,5 +64,30 @@ resource "google_container_node_pool" "primary_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+  }
+}
+
+provider "kubernetes" {
+  host     = "${google_container_cluster.primary.endpoint}"
+
+  token = "${data.google_client_config.default.access_token}"
+  cluster_ca_certificate = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
+
+  load_config_file = false
+}
+
+resource "kubernetes_cluster_role_binding" "terraform-cluster-admin" {
+  metadata {
+    name = "terraform-cluster-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "User"
+    name      = "REPLACE_CLUSTER_ADMIN_USER"
+    api_group = "rbac.authorization.k8s.io"
   }
 }
