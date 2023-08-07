@@ -74,7 +74,7 @@ jobs:
             --set installCRDs=true --wait
 
           kubectl annotate serviceaccount --namespace=cert-manager cert-manager \
-            "iam.gke.io/gcp-service-account=dns01-solver@${GPC_PROJECT_ID}.iam.gserviceaccount.com" --overwrite=true
+            "iam.gke.io/gcp-service-account=dns01-solver@${GCP_PROJECT_ID}.iam.gserviceaccount.com" --overwrite=true
           
           kubectl apply -f ./cert-manager/cluster-issuer.yaml
 
