@@ -46,10 +46,6 @@ resource "google_container_node_pool" "primary_nodes" {
   cluster = google_container_cluster.primary.name
   initial_node_count = 1
 
-  node_config {
-    disk_size_gb = 20
-  }
-
   autoscaling {
     max_node_count = var.max_node_count
     min_node_count = var.min_node_count
@@ -58,6 +54,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     preemptible = false
     machine_type = var.machine_type
+    disk_size_gb = 20
 
     metadata = {
       disable-legacy-endpoints = "true"
