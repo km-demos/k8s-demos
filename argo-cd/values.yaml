@@ -15,7 +15,7 @@ server:
     enabled: true
     # -- Additional ingress annotations
     annotations: 
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     # -- Additional ingress labels
     labels: {}
     # -- Defines which ingress controller will implement the resource
@@ -52,6 +52,7 @@ server:
     isAWSALB: false
     # -- Additional ingress annotations for dedicated [gRPC-ingress]
     annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
       nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 
     # -- Additional ingress labels for dedicated [gRPC-ingress]

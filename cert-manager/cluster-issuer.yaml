@@ -26,7 +26,7 @@ metadata:
 spec:
   secretName: examples-tls-secret
   issuerRef: 
-    kind: Issuer
+    kind: ClusterIssuer
     name: letsencrypt-prod
   commonName: "*.examples.kurtmadel.com"
   dnsNames:
