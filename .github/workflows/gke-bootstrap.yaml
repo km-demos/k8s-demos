@@ -100,6 +100,7 @@ jobs:
             --set server.ingress.enabled=true \
             --set server.ingress.ingressClassName="nginx" \
             --set "server.ingress.hosts={argocd.demos.kurtmadel.com}" \
+            --set server.ingress.https=false \
             --set applicationSet.enabled=false
 
       - id: get-pods-after-bootstrap
