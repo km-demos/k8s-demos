@@ -1,0 +1,57 @@
+name: "GKE Destroy"
+
+on:
+    workflow_dispatch:
+      inputs:
+        cluster-name:
+          description: 'Name of GKE cluster to create'
+          default: "demo-cluster"
+        gcp-region:
+          description: 'GCP region to create cluster'
+          default: "us-central1"
+
+env:
+  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
+  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-central1' }}
+  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-b
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+      TF_VAR_project: ${{ secrets.GCP_PROJECT }}
+      TF_VAR_cluster_name: ${{ github.env.CLUSTER_NAME }}
+      TF_VAR_region: ${{ github.env.GCP_REGION }}
+      TF_VAR_zone: ${{ github.env.GCP_ZONE }}
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: gke_tf
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          create_credentials_file: 'true'
+          workload_identity_provider: ${{ secrets.WIF_POOL }}
+          service_account: ${{ secrets.SA_EMAIL }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+        run: terraform apply -destroy -auto-approve
+
+      - id: delete-bucket
+        name: Create GCP storage bucket
+        run: gcloud storage rm --recursive gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
+          
