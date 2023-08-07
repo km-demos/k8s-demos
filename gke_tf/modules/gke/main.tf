@@ -1,6 +1,6 @@
 # google_client_config and kubernetes provider must be explicitly specified like the following.
 # Retrieve an access token as the Terraform runner
-data "google_client_config" "default" {}
+data "google_client_config" "provider" {}
 
 data "google_compute_network" "default" {
   name = "default"
@@ -10,8 +10,14 @@ resource "google_container_cluster" "primary" {
   name = var.cluster_name
   location = var.zone
   remove_default_node_pool = true
-  initial_node_count = 1
   subnetwork = "default"
+
+  node_pool = {
+    name = "default-pool"
+  }
+  lifecycle = {
+    ignore_changes = ["node_pool"]
+  }
 
   release_channel {
     channel = "REGULAR"
@@ -70,9 +76,11 @@ resource "google_container_node_pool" "primary_nodes" {
 }
 
 provider "kubernetes" {
-  host     = "https://${google_container_cluster.primary.endpoint}"
-  token = "${data.google_client_config.default.access_token}"
-  cluster_ca_certificate = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
+  host  = "https://${data.google_container_cluster.primary.endpoint}"
+  token = data.google_client_config.provider.access_token
+  cluster_ca_certificate = base64decode(
+    data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate,
+  )
 }
 
 resource "kubernetes_cluster_role_binding" "terraform-cluster-admin" {
