@@ -36,7 +36,7 @@ server:
 
     # -- Ingress TLS configuration
     tls: 
-      - secretName: examples-tls-secret
+      - secretName: argocd-server
         hosts:
           - argocd.examples.kurtmadel.com
 
