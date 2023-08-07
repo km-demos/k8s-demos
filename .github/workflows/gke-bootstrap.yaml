@@ -49,7 +49,22 @@ jobs:
         run: kubectl get pods -A 
       
       - name: test helm
-        run: helm list --all-namespaces
+        run: | 
+          helm env
+          helm list --all-namespaces
+
+      - id: install-komodor-watcher
+        env:
+            KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }}  
+        run: |
+            helm repo add komodorio https://helm-charts.komodor.io
+            helm repo update
+            helm upgrade --install k8s-watcher komodorio/k8s-watcher --set watcher.actions.basic=true --set watcher.actions.advanced=true \
+                --set watcher.actions.podExec=true --set metrics.enabled=true \
+                --set apiKey=$KOMODOR_API_KEY \
+                --set watcher.clusterName=default \
+                --set watcher.actions.portforward=true --set watcher.resources.secret=true \
+                --set watcher.enableHelm=true --set helm.enableActions=true --wait -n k8s-watcher --create-namespace
 
       - id: install-ingress-nginx 
         run: |
@@ -57,19 +72,6 @@ jobs:
           helm repo update
           helm upgrade --install --wait ingress-nginx ingress-nginx/ingress-nginx \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
-
-      - id: install-komodor-watcher
-        env:
-          KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }}  
-        run: |
-          helm repo add komodorio https://helm-charts.komodor.io
-          helm repo update
-          helm upgrade --install k8s-watcher komodorio/k8s-watcher --set watcher.actions.basic=true --set watcher.actions.advanced=true \
-              --set watcher.actions.podExec=true --set metrics.enabled=true \
-              --set apiKey=$KOMODOR_API_KEY \
-              --set watcher.clusterName=default \
-              --set watcher.actions.portforward=true --set watcher.resources.secret=true \
-              --set watcher.enableHelm=true --set helm.enableActions=true --wait -n k8s-watcher --create-namespace
 
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 
