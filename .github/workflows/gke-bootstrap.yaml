@@ -65,7 +65,9 @@ jobs:
 
       - id: install-cert-manager
         run: |
-          helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace \
+          helm repo add cert-manager https://charts.jetstack.io
+          helm repo update
+          helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
             --version v1.12.3 \
             --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
             --set extraArgs={--issuer-ambient-credentials=true} \
