@@ -16,9 +16,9 @@ env:
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-b
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
-  TF_VAR_cluster_name: ${{ github.env.CLUSTER_NAME }}
-  TF_VAR_region: ${{ github.env.GCP_REGION }}
-  TF_VAR_zone: ${{ github.env.GCP_ZONE }}
+  TF_VAR_cluster_name: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
+  TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-central1' }}
+  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-b
 
 jobs:
   terraform:
