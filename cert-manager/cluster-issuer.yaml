@@ -17,3 +17,17 @@ spec:
         cloudDNS:
           # The ID of the GCP project
           project: default-394913
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: examples-wildcard-cert
+  namespace: argo-cd
+spec:
+  secretName: examples-tls-secret
+  issuerRef: 
+    kind: Issuer
+    name: letsencrypt-prod
+  commonName: "*.examples.kurtmadel.com"
+  dnsNames:
+    - "*.examples.kurtmadel.com"

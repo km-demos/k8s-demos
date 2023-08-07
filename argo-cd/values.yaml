@@ -15,7 +15,6 @@ server:
     enabled: true
     # -- Additional ingress annotations
     annotations: 
-      cert-manager.io/cluster-issuer: letsencrypt-prod
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     # -- Additional ingress labels
     labels: {}
@@ -37,7 +36,7 @@ server:
 
     # -- Ingress TLS configuration
     tls: 
-      - secretName: argo-server
+      - secretName: examples-tls-secret
         hosts:
           - argocd.examples.kurtmadel.com
 
@@ -53,7 +52,6 @@ server:
     isAWSALB: false
     # -- Additional ingress annotations for dedicated [gRPC-ingress]
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
       nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 
     # -- Additional ingress labels for dedicated [gRPC-ingress]
@@ -89,7 +87,7 @@ server:
 
     # -- Ingress TLS configuration for dedicated [gRPC-ingress]
     tls: 
-      - secretName: argoc-grpc-server
+      - secretName: examples-tls-secret
         hosts:
           - argocd-grpc.examples.kurtmadel.com
 
