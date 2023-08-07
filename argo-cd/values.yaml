@@ -27,7 +27,7 @@ server:
     ## Hostnames must be provided if Ingress is enabled.
     ## Secrets must be manually created in the namespace
     hosts: 
-      - argo-cd.demos.kurtmadel.com
+      - argocd.examples.kurtmadel.com
 
     # -- List of ingress paths
     paths:
@@ -39,7 +39,7 @@ server:
     tls: 
       - secretName: argo-server
         hosts:
-          - argo-cd.demos.kurtmadel.com
+          - argocd.examples.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
@@ -79,7 +79,7 @@ server:
     ## Secrets must be manually created in the namespace
     ##
     hosts: 
-      - argo-cd-grpc.demos.kurtmadel.com
+      - argocd-grpc.examples.kurtmadel.com
 
     # -- List of ingress paths for dedicated [gRPC-ingress]
     paths:
@@ -89,9 +89,9 @@ server:
 
     # -- Ingress TLS configuration for dedicated [gRPC-ingress]
     tls: 
-      - secretName: your-certificate-name
+      - secretName: argoc-grpc-server
         hosts:
-          - argo-cd-grpc.demos.kurtmadel.com
+          - argocd-grpc.examples.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
