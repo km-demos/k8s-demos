@@ -1,12 +1,6 @@
 name: "GKE Create"
 
 on:
-  push:
-    paths:
-    - 'gke_tf/**'
-    branches:
-      - main
-  pull_request:
   workflow_dispatch:
     inputs:
       cluster-name:
@@ -59,19 +53,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
-          
-      - name: Terraform Plan
-        id: plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -no-color
-        continue-on-error: true
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         run: terraform apply -auto-approve
   
   bootstrap:
@@ -90,7 +73,6 @@ jobs:
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ secrets.SA_EMAIL }}
       - id: get-credentials
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         uses: google-github-actions/get-gke-credentials@v1.0.2
         with:
           cluster_name: ${{ github.env.CLUSTER_NAME }}
@@ -98,11 +80,9 @@ jobs:
           credentials: ${{ secrets.GCP_SECRET }}
       
       - id: get-pods
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         run: kubectl get pods -A 
 
       - id: install-ingress-nginx 
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
@@ -111,8 +91,7 @@ jobs:
 
       - id: install-komodor-watcher
         env:
-          KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }} 
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+          KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }}  
         run: |
           helm repo add komodorio https://helm-charts.komodor.io
           helm repo update
@@ -124,5 +103,4 @@ jobs:
               --set watcher.enableHelm=true --set helm.enableActions=true --wait -n k8s-watcher --create-namespace
 
       - id: get-pods-after-bootstrap
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
         run: kubectl get pods -A 
