@@ -69,14 +69,6 @@ jobs:
           helm repo update
           helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
-      
-      - id: ingress-dns
-        run: |
-          INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
-          #create DNS entry for DNS_HOST above hostname to map to that IP
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
 
       - id: install-komodor-watcher
         env:
@@ -101,6 +93,10 @@ jobs:
             --set server.ingress.ingressClassName="nginx" \
             --set "server.ingress.hosts={argocd.demos.kurtmadel.com}" \
             --set server.ingress.https=false \
+            --set server.ingressGrpc.enabled=true \
+            --set server.ingressGrpc.ingressClassName="nginx" \
+            --set "server.ingressGrpc.hosts={argocd-grpc.demos.kurtmadel.com}" \
+            --set server.ingressGrpc.https=false \
             --set applicationSet.enabled=false
 
       - id: get-pods-after-bootstrap
