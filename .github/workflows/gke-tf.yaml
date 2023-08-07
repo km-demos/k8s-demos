@@ -50,11 +50,10 @@ jobs:
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ secrets.SA_EMAIL }}
 
-      - uses: 'google-github-actions/setup-gcloud@v1.1.1'
-
       - id: create-bucket
         name: Create GCP storage bucket
         run: |
+          gcloud auth login
           gcloud storage buckets create gs://${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
           sed -i 's/REPLACE_BUCKET/${CLUSTER_NAME}/' providers.tf
 
