@@ -41,7 +41,9 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ secrets.SA_EMAIL }}
-
+      - id: update-terraform-bucket
+        name: Create GCP storage bucket
+        run: sed -i "s/REPLACE_BUCKET/${GCP_PROJECT_ID}-${CLUSTER_NAME}/g" providers.tf
       - name: Terraform Init
         id: init
         run: terraform init
