@@ -1,6 +1,9 @@
 name: "GKE Create"
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       cluster-name:
@@ -25,13 +28,13 @@ on:
 
 env:
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
-  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
+  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
   TF_VAR_cluster_name: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
-  TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-east5' }}
+  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
   DNS_ZONE: demos-kurtmadel
   DNS_HOST: "*.demos.kurtmadel.com"
@@ -97,13 +100,16 @@ jobs:
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.GCP_ZONE }}
-          credentials: ${{ secrets.GCP_SECRET }}
       
       - id: get-pods
         run: kubectl get pods -A  
 
       - id: install-cert-manager
         run: |
+          gcloud iam service-accounts add-iam-policy-binding \
+            --role roles/iam.workloadIdentityUser \
+            --member "serviceAccount:${PROJECT_ID}.svc.id.goog[cert-manager/cert-manager]" \
+            dns01-solver@${PROJECT_ID}.iam.gserviceaccount.com
           helm repo add cert-manager https://charts.jetstack.io
           helm repo update
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
