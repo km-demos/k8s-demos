@@ -90,7 +90,6 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: google-github-actions/auth@v1.1.1
         with:
-          create_credentials_file: 'true'
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ secrets.SA_EMAIL }}
 
@@ -107,8 +106,8 @@ jobs:
         run: |
           gcloud iam service-accounts add-iam-policy-binding \
             --role roles/iam.workloadIdentityUser \
-            --member "serviceAccount:${PROJECT_ID}.svc.id.goog[cert-manager/cert-manager]" \
-            dns01-solver@${PROJECT_ID}.iam.gserviceaccount.com
+            --member "serviceAccount:${GPC_PROJECT_ID}.svc.id.goog[cert-manager/cert-manager]" \
+            dns01-solver@${GPC_PROJECT_ID}.iam.gserviceaccount.com
           helm repo add cert-manager https://charts.jetstack.io
           helm repo update
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
