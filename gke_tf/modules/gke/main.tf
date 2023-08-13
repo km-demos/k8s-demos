@@ -69,34 +69,6 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-provider "kubernetes" {
-  host  = "https://${google_container_cluster.primary.endpoint}"
-  token = data.google_client_config.provider.access_token
-  cluster_ca_certificate = base64decode(
-    google_container_cluster.primary.master_auth[0].cluster_ca_certificate,
-  )
-}
-
-resource "kubernetes_cluster_role_binding" "terraform-cluster-admin" {
-  metadata {
-    name = "terraform-cluster-admin"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-  subject {
-    kind      = "User"
-    name      = "REPLACE_CLUSTER_ADMIN_USER"
-    api_group = "rbac.authorization.k8s.io"
-  }
-
-  depends_on = [
-    google_container_node_pool.primary_nodes
-  ]
-}
-
 resource "google_service_account" "cert_manager_dns_admin" {
   project      = var.project
   account_id   = "dns01-solver"
