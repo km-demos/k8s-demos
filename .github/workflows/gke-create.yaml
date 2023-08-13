@@ -104,10 +104,6 @@ jobs:
 
       - id: install-cert-manager
         run: |
-          gcloud iam service-accounts add-iam-policy-binding \
-            --role roles/iam.workloadIdentityUser \
-            --member "serviceAccount:${GCP_PROJECT_ID}.svc.id.goog[cert-manager/cert-manager]" \
-            dns01-solver@${GCP_PROJECT_ID}.iam.gserviceaccount.com
           helm repo add cert-manager https://charts.jetstack.io
           helm repo update
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
