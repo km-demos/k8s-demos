@@ -61,11 +61,10 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ env.GCP_SA_EMAIL }}
-
+      # TODO need to make bucket creation conditional: gcloud storage buckets create gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
       - id: create-bucket
         name: Create GCP storage bucket
         run: |
-          gcloud storage buckets create gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
           sed -i "s/REPLACE_BUCKET/${GCP_PROJECT_ID}-${CLUSTER_NAME}/g" providers.tf
           sed -i "s/REPLACE_CLUSTER_ADMIN_USER/${GCP_SA_EMAIL}/g" modules/gke/main.tf
 
