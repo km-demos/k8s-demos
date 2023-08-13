@@ -128,9 +128,10 @@ jobs:
         env:
           KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }}  
         run: |
-          helm repo add komodorio https://helm-charts.komodor.io
+          helm repo add komodor https://helm-charts.komodor.io
           helm repo update
-          helm upgrade --install k8s-watcher komodorio/k8s-watcher --set watcher.actions.basic=true --set watcher.actions.advanced=true \
+          helm upgrade --install k8s-watcher komodor/k8s-watcher --version 1.15.8 \
+              --set watcher.actions.basic=true --set watcher.actions.advanced=true \
               --set watcher.actions.podExec=true --set metrics.enabled=true \
               --set apiKey=$KOMODOR_API_KEY \
               --set watcher.clusterName=default \
