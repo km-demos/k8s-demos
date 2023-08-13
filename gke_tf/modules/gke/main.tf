@@ -10,14 +10,8 @@ resource "google_container_cluster" "primary" {
   name = var.cluster_name
   location = var.zone
   remove_default_node_pool = true
+  initial_node_count       = 1
   subnetwork = "default"
-
-  node_pool = {
-    name = "default-pool"
-  }
-  lifecycle = {
-    ignore_changes = ["node_pool"]
-  }
 
   release_channel {
     channel = "REGULAR"
@@ -73,32 +67,4 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
-}
-
-provider "kubernetes" {
-  host  = "https://${data.google_container_cluster.primary.endpoint}"
-  token = data.google_client_config.provider.access_token
-  cluster_ca_certificate = base64decode(
-    data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate,
-  )
-}
-
-resource "kubernetes_cluster_role_binding" "terraform-cluster-admin" {
-  metadata {
-    name = "terraform-cluster-admin"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-  subject {
-    kind      = "User"
-    name      = "REPLACE_CLUSTER_ADMIN_USER"
-    api_group = "rbac.authorization.k8s.io"
-  }
-
-  depends_on = [
-    google_container_node_pool.primary_nodes
-  ]
 }
