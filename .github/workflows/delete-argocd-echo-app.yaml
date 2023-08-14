@@ -78,6 +78,6 @@ jobs:
         location: ${{ env.GCP_ZONE }}
     - id: gcp-cleanup
       run: |
-        kubectl delete application -n argo-cd $REPO_NAME
-        kubectl delete ns $REPO_NAME
+        kubectl delete application --ignore-not-found=true -n argo-cd $REPO_NAME
+        kubectl delete ns --ignore-not-found=true $REPO_NAME
         gcloud dns record-sets delete $REPO_NAME.examples.kurtmadel.com. --type=A --zone=$GCP_DNS_ZONE --project=$GCP_PROJECT_ID
