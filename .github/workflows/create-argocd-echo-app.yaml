@@ -80,7 +80,7 @@ jobs:
       run: |
         INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$GCP_DNS_ZONE
-        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$REPO_NAME. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
+        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$REPO_NAME.examples.kurtmadel.com. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$GCP_DNS_ZONE
     - id: create-argocd-app
       run: |
