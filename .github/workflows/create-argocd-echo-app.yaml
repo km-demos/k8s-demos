@@ -129,14 +129,14 @@ jobs:
         git checkout main
 
         git checkout -b fix-err-image-pull
-        curl https://raw.githubusercontent.com/km-demos/helm-chart/values.yaml > helm-chart/values.yaml
+        curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-err-image-pull/helm-chart/values.yaml > helm-chart/values.yaml
         git add *
         git commit -am "udpating values.yaml to fix ImagePullBackOff"
         git push origin fix-err-image-pull
 
         git checkout -b fix-crash-loop-backoff
-        curl https://raw.githubusercontent.com/km-demos/helm-chart/values.yaml > helm-chart/values.yaml
-        curl https://raw.githubusercontent.com/km-demos/helm-chart/templates/deployments.yaml > helm-chart/templates/deployments.yaml
+        curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-crash-loop-backoff/helm-chart/values.yaml > helm-chart/values.yaml
+        curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-crash-loop-backoff/helm-chart/templates/deployments.yaml > helm-chart/templates/deployments.yaml
         git add *
         git commit -am "udpates to fix CrashLoopBackOff"
         git push origin fix-crash-loop-backoff
