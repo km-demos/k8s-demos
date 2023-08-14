@@ -111,6 +111,7 @@ jobs:
         repository: km-demos/$REPO_NAME
         token: ${{ secrets.KM_DEMOS_PAT }}
         path: $REPO_NAME
+        ref: main
     - id: branches-prs
       name: branches-prs
       shell: bash
