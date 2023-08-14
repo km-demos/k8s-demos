@@ -108,9 +108,9 @@ jobs:
       name: clone-repo-copy
       uses: actions/checkout@v3
       with:
-        repository: km-demos/$REPO_NAME
+        repository: km-demos/${{ env.REPO_NAME }}
         token: ${{ secrets.KM_DEMOS_PAT }}
-        path: $REPO_NAME
+        path: ${{ env.REPO_NAME }}
         ref: main
     - id: branches-prs
       name: branches-prs
