@@ -106,7 +106,7 @@ jobs:
         mkdir -p $REPO_NAME
     - id: clone-repo-copy
       name: clone-repo-copy
-      uses: actions/checkout@3
+      uses: actions/checkout@v3
       with:
         repository: km-demos/$REPO_NAME
         token: ${{ secrets.KM_DEMOS_PAT }}
