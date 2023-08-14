@@ -20,5 +20,5 @@ spec:
         cnameStrategy: Follow
         cloudDNS:
           # The ID of the GCP project
-          project: default-394913
+          project: km-demos
           hostedZoneName: examples-kurtmadel

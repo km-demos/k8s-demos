@@ -1,9 +1,6 @@
 name: "GKE Create"
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       cluster-name:
@@ -58,7 +55,6 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: google-github-actions/auth@v1.1.1
         with:
-          create_credentials_file: 'true'
           workload_identity_provider: ${{ secrets.WIF_POOL }}
           service_account: ${{ env.GCP_SA_EMAIL }}
       # TODO need to make bucket creation conditional: gcloud storage buckets create gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --project $GCP_PROJECT_ID --location $GCP_REGION
