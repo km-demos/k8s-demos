@@ -62,7 +62,7 @@ jobs:
           -f owner='km-demos' \
           -f name="$REPO_NAME" \
           -f description='Simple ehco app to use with ArgoCD demo.' \
-          -F include_all_branches=true \
+          -F include_all_branches=false \
           -F private=false
         echo '{"name":"web","active":true,"events":["push","pull_request","release"],"config":{"url":"https://argocd.examples.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
     - id: 'gcp-auth'
@@ -103,3 +103,39 @@ jobs:
           https://api.github.com/repos/km-demos/$REPO_NAME/branches/main/protection \
           -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":{"required_approving_review_count": 0},"restrictions":null}'
 
+
+    - id: branches-prs
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        mkdir -p $REPO_NAME
+        cd $REPO_NAME
+        git config --global init.defaultBranch main
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git config pull.rebase false
+        git clone https://github.com/kmd-demos/$REPO_NAME.git .
+
+        git checkout -b fix-err-image-pull
+        curl https://raw.githubusercontent.com/km-demos/helm-chart/values.yaml > helm-chart/values.yaml
+        git add *
+        git commit -am "udpating values.yaml to fix ImagePullBackOff"
+        git push origin fix-err-image-pull
+
+        git checkout -b fix-crash-loop-backoff
+        curl https://raw.githubusercontent.com/km-demos/helm-chart/values.yaml > helm-chart/values.yaml
+        curl https://raw.githubusercontent.com/km-demos/helm-chart/templates/deployments.yaml > helm-chart/templates/deployments.yaml
+        git add *
+        git commit -am "udpates to fix CrashLoopBackOff"
+        git push origin fix-crash-loop-backoff
+            
+        curl -H 'Accept: application/vnd.github.antiope-preview+json' \
+          -H "authorization: Bearer $GITHUB_TOKEN" \
+          --data '{"title":"Fix ImagePullBackOff ","head":"fix-err-image-pull","base":"main"}' \
+          https://api.github.com/repos/km-demos/$REPO_NAME/pulls
+            
+        curl -H 'Accept: application/vnd.github.antiope-preview+json' \
+          -H "authorization: Bearer $GITHUB_TOKEN" \
+          --data '{"title":"Fix CrashLoopBackOff ","head":"fix-crash-loop-backoff","base":"fix-err-image-pull"}' \
+          https://api.github.com/repos/km-demos/$REPO_NAME/pulls
