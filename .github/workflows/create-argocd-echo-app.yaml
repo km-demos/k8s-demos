@@ -84,6 +84,8 @@ jobs:
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$GCP_DNS_ZONE
     - id: create-argocd-app
       run: |
+        kubectl create secret docker-registry ghcr-login-secret -n $REPO_NAME --docker-server=https://ghcr.io \
+          --docker-username=km-demos --docker-password=${{ secrets.KM_MANAGE_PACKAGES_TOKEN }} --docker-email=km@kurtmadel.com
         yq e -i ".metadata.name = \"$REPO_NAME\"" argo-cd/argocd-app.yaml
         yq e -i ".spec.source.repoURL = \"https://github.com/km-demos/$REPO_NAME.git\"" argo-cd/argocd-app.yaml
         yq e -i ".spec.destination.namespace = \"$REPO_NAME\"" argo-cd/argocd-app.yaml
