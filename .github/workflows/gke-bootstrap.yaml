@@ -38,7 +38,7 @@ env:
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
   DNS_ZONE: k8s-kurt-madel
   DNS_HOST: "*.k8s.kurtmadel.com"
-  LOFT_VERSION: ${{ inputs.loft-version || '3.3.0-alpha.18' }}
+  LOFT_VERSION: ${{ inputs.loft-version || '3.2.4' }}
 
 jobs:
   bootstrap:
