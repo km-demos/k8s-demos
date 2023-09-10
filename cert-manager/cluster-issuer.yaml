@@ -15,10 +15,10 @@ spec:
     solvers:
     - selector:
         dnsZones:
-        - 'kurtmadel.com'
+        - 'k8s.kurtmadel.com'
       dns01:
         cnameStrategy: Follow
         cloudDNS:
           # The ID of the GCP project
           project: km-demos
-          hostedZoneName: examples-kurtmadel
+          hostedZoneName: k8s-kurt-madel
