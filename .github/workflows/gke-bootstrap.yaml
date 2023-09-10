@@ -19,8 +19,8 @@ on:
         description: 'GCP zone to create cluster'
         default: "a"
         options: 
-        - a
         - b
+        - a
         - c
       loft-version:
         description: 'Loft version to install'
