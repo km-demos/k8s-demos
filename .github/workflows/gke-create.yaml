@@ -65,6 +65,7 @@ jobs:
       - id: create-bucket
         name: Create GCP storage bucket
         run: |
+          gcloud storage buckets create gs://${GCP_PROJECT_ID}-${CLUSTER_NAME} --location=$GCP_REGION
           sed -i "s/REPLACE_BUCKET/${GCP_PROJECT_ID}-${CLUSTER_NAME}/g" providers.tf
           sed -i "s/REPLACE_CLUSTER_ADMIN_USER/${GCP_SA_EMAIL}/g" modules/gke/main.tf
 
