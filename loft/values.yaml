@@ -18,7 +18,12 @@ ingress:
   enabled: true
   name: loft-ingress
   # labels: {}            # {key: value} map of labels for the ingress
-  # annotations: {}       # {key: value} map of annotations for the ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+    nginx.ingress.kubernetes.io/ssl-passthrough: 'true'
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS'
   host: loft.mydomain.tld
   ingressClass: nginx
   path: /
