@@ -121,4 +121,4 @@ notifications:
   name: notifications-controller
 
   # -- Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates
-  argocdUrl:
+  argocdUrl: https://argocd.k8s.kurtmadel.com
