@@ -24,7 +24,7 @@ on:
         - c
       loft-version:
         description: 'Loft version to install'
-        default: "3.3.0-beta.1"
+        default: "3.2.4"
 
 env:
   CLUSTER_NAME: ${{ inputs.cluster-name || 'demo-cluster' }}
