@@ -37,7 +37,7 @@ env:
   TF_VAR_zone: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
   DNS_ZONE: k8s-kurt-madel
-  DNS_HOST: "*.k8s.kurtmadel.com"
+  DNS_HOST_SUFFIX: ".k8s.kurtmadel.com"
   LOFT_VERSION: ${{ inputs.loft-version || '3.2.4' }}
 
 jobs:
@@ -95,12 +95,17 @@ jobs:
           INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
           #delete existing record if it exists
           gcloud dns --project=$GCP_PROJECT_ID record-sets delete $DNS_HOST. --type=A --zone=$DNS_ZONE
-          #create DNS entry for CBCI above hostname to map to that IP
+          #create DNS entry for loft hostname to map to that IP
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
-          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=loft$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
+          #create DNS entry for argocd hostname to map to that IP
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=argocd$DNS_HOST. --ttl=300 --type=A --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
 
       - id: install-loft
+        continue-on-error: true
         env: 
           LOFT_HOST: ${{ vars.LOFT_HOST }}
           LOFT_ADMIN_PASSWORD: ${{ secrets.LOFT_ADMIN_PASSWORD }} 

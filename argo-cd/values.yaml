@@ -82,7 +82,7 @@ server:
     ## Secrets must be manually created in the namespace
     ##
     hosts: 
-      - argocd-grpc.examples.kurtmadel.com
+      - argocd-grpc.k8s.kurtmadel.com
 
     # -- List of ingress paths for dedicated [gRPC-ingress]
     paths:
@@ -92,9 +92,9 @@ server:
 
     # -- Ingress TLS configuration for dedicated [gRPC-ingress]
     tls: 
-      - secretName: examples-tls-secret
+      - secretName: argocd-grpc-tls-secret
         hosts:
-          - argocd-grpc.examples.kurtmadel.com
+          - argocd-grpc.k8s.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
