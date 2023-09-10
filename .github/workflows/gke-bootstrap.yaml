@@ -5,7 +5,7 @@ on:
     inputs:
       cluster-name:
         description: 'Name of GKE cluster to create'
-        default: "demo-cluster"
+        default: "k8s-demo-cluster"
       gcp-region:
         type: choice
         description: 'GCP region to create cluster'
@@ -22,19 +22,23 @@ on:
         - a
         - b
         - c
+      loft-version:
+        description: 'Loft version to install'
+        default: "3.3.0-beta.1"
 
 env:
-  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
-  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  CLUSTER_NAME: ${{ inputs.cluster-name || 'demo-cluster' }}
+  GCP_REGION: ${{ inputs.gcp-region || 'us-central1' }}
+  GCP_ZONE: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
-  TF_VAR_cluster_name: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
-  TF_VAR_region: ${{ github.event.inputs.gcp-region || 'us-central1' }}
-  TF_VAR_zone: ${{ github.event.inputs.gcp-region || 'us-central1' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  TF_VAR_cluster_name: ${{ inputs.cluster-name || 'demo-cluster' }}
+  TF_VAR_region: ${{ inputs.gcp-region || 'us-central1' }}
+  TF_VAR_zone: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
-  DNS_ZONE: demos-kurtmadel
-  DNS_HOST: "*.demos.kurtmadel.com"
+  DNS_ZONE: k8s-kurtmadel
+  DNS_HOST: "*.k8s.kurtmadel.com"
+  LOFT_VERSION: ${{ inputs.loft-version || '3.3.0-beta.1' }}
 
 jobs:
   bootstrap:
@@ -85,18 +89,22 @@ jobs:
           helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
 
-      - id: install-komodor-watcher
-        env:
-          KOMODOR_API_KEY: ${{ secrets.KOMODOR_API_KEY }}  
+      - id: install-loft
+        env: 
+          LOFT_HOST: ${{ vars.LOFT_HOST }}
+          LOFT_ADMIN_PASSWORD: ${{ secrets.LOFT_ADMIN_PASSWORD }} 
+          LOFT_GITHUB_CLIENT_ID: ${{ secrets.LOFT_GITHUB_CLIENT_ID }}
+          LOFT_GITHUB_CLIENT_SECRET: ${{ secrets.LOFT_GITHUB_CLIENT_SECRET }}
         run: |
-          helm repo add komodorio https://helm-charts.komodor.io
-          helm repo update
-          helm upgrade --install k8s-watcher komodorio/k8s-watcher --set watcher.actions.basic=true --set watcher.actions.advanced=true \
-              --set watcher.actions.podExec=true --set metrics.enabled=true \
-              --set apiKey=$KOMODOR_API_KEY \
-              --set watcher.clusterName=default \
-              --set watcher.actions.portforward=true --set watcher.resources.secret=true \
-              --set watcher.enableHelm=true --set helm.enableActions=true --wait -n k8s-watcher --create-namespace
+          helm upgrade loft loft --install --version $LOFT_VERSION \
+            --repo https://charts.loft.sh/ \
+            --namespace loft \
+            --create-namespace \
+            --set admin.password=$LOFT_ADMIN_PASSWORD \
+            --set config.auth.github.clientId=$LOFT_GITHUB_CLIENT_ID \
+            --set config.auth.github.clientSecret=$LOFT_GITHUB_CLIENT_SECRET \
+            --set config.auth.github.redirectURI=$LOFT_HOST/auth/github/callback \
+            --values ./loft/values.yaml --wait
 
       - id: install-argocd 
         run: |

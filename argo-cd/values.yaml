@@ -30,7 +30,7 @@ server:
     ## Hostnames must be provided if Ingress is enabled.
     ## Secrets must be manually created in the namespace
     hosts: 
-      - argocd.examples.kurtmadel.com
+      - argocd.k8s.kurtmadel.com
 
     # -- List of ingress paths
     paths:
@@ -42,7 +42,7 @@ server:
     tls: 
       - secretName: argocd-server
         hosts:
-          - argocd.examples.kurtmadel.com
+          - argocd.k8s.kurtmadel.com
 
     # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
     https: true
