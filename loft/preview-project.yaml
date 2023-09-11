@@ -55,6 +55,10 @@ spec:
     group: storage.loft.sh
     kind: Team
     name: echo-dev
+  - kind: Team
+    group: storage.loft.sh
+    clusterRole: loft-management-project-user
+    name: km-demosecho-app
   owner:
     user: admin
   quotas:
