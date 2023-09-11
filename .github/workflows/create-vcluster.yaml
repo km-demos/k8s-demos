@@ -1,4 +1,4 @@
-name: Create Preview Environment
+name: Create vcluster
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 
 env:
   VCLUSTER_NAME: ${{ inputs.vcluster-name || 'my-vcluster' }}
-# define a job that deploys the preview environment
+# define a job that creates a vcluster using the Loft CLI.
 jobs:
   create-cluster:
     runs-on: ubuntu-latest
