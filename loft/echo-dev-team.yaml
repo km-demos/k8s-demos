@@ -1,0 +1,26 @@
+apiVersion: management.loft.sh/v1
+kind: Team
+metadata:
+  name: echo-dev
+spec:
+  access:
+  - subresources:
+    - '*'
+    users:
+    - admin
+    verbs:
+    - '*'
+  - name: loft-access
+    subresources:
+    - clusters
+    teams:
+    - echo-dev
+    verbs:
+    - get
+    - bind
+  displayName: echo-dev
+  owner:
+    user: admin
+  users:
+  - admin
+status: {}

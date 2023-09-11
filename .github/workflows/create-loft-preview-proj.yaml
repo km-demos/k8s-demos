@@ -1,4 +1,4 @@
-name: Create vcluster
+name: Create Loft preview project
 
 on:
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Create Cluster
         run: |
-          # Make sure to recreate if there is an already existing environment
-          loft create vcluster $VCLUSTER_NAME --project preview --recreate
-          kubectl get pods -A
-
+          loft use management
+          kubectl apply -f ./loft/echo-dev-team.yaml
+          kubectl apply -f ./preview-vcluster-template.yaml
+          kubectl apply -f ./preview-project.yaml
