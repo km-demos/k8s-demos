@@ -25,7 +25,7 @@ jobs:
           # Specify your Loft access key here
           access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
 
-      - name: Create Cluster
+      - name: Create Preview Project
         run: |
           loft use management
           kubectl apply -f ./loft/echo-dev-team.yaml
