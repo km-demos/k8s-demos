@@ -11,7 +11,7 @@ env:
   VCLUSTER_NAME: ${{ inputs.vcluster-name || 'my-vcluster' }}
 # define a job that creates a vcluster using the Loft CLI.
 jobs:
-  create-cluster:
+  create-preview-project:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
