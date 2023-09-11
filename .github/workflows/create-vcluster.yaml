@@ -29,10 +29,9 @@ jobs:
         run: |
           # Make sure to recreate if there is an already existing environment
           loft create vcluster $VCLUSTER_NAME --project preview --recreate
-          ls -la
           kubectl config view > kubeconfig.yaml
-          loft use vcluster $VCLUSTER_NAME --project preview --print
           ls -la
+          more kubeconfig.yaml
           kubectl get pods -A
           curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
