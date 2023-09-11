@@ -150,7 +150,8 @@ audit:
 
 # Prometheus Service Monitor Configuration
 serviceMonitor:
-  enabled: false
+  enabled: true
+  namespace: loft
   jobLabel: loft
   targetPort: 8080
   path: /metrics

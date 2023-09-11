@@ -1,0 +1,63 @@
+apiVersion: management.loft.sh/v1
+kind: Project
+metadata:
+  name: preview
+spec:
+  access:
+  - name: loft-access
+    subresources:
+    - members
+    - clusters
+    - templates
+    - chartinfo
+    - charts
+    teams:
+    - echo-dev
+    users:
+    - admin
+    verbs:
+    - get
+  - name: loft-admin-access
+    subresources:
+    - '*'
+    users:
+    - admin
+    verbs:
+    - get
+    - update
+    - patch
+    - delete
+  allowedClusters:
+  - name: '*'
+  allowedTemplates:
+  - group: storage.loft.sh
+    kind: SpaceTemplate
+    name: 'loft-cluster'
+  - group: storage.loft.sh
+    kind: VirtualClusterTemplate
+    name: preview-template
+  argoCD:
+    cluster: loft-cluster
+    enabled: true
+    namespace: argo-cd
+    sso:
+      assignedRoles:
+      - role:readonly
+      enabled: true
+      host: https://argocd.k8s.kurtmadel.com
+  displayName: preview
+  members:
+  - clusterRole: loft-management-project-user
+    group: storage.loft.sh
+    kind: User
+    name: admin
+  - clusterRole: loft-management-project-user
+    group: storage.loft.sh
+    kind: Team
+    name: echo-dev
+  owner:
+    user: admin
+  quotas:
+    project:
+      requests.cpu: "2"
+status: {}

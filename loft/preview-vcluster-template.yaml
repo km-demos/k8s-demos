@@ -1,0 +1,38 @@
+apiVersion: management.loft.sh/v1
+kind: VirtualClusterTemplate
+metadata:
+  name: preview-template
+spec:
+  access:
+  - subresources:
+    - '*'
+    users:
+    - admin
+    verbs:
+    - '*'
+  displayName: preview-template
+  owner:
+    user: admin
+  template:
+    access:
+      rules:
+      - clusterRole: cluster-admin
+        users:
+        - admin
+    accessPoint:
+      ingress: {}
+    helmRelease:
+      chart: {}
+      values: |-
+        sync:
+          ingresses:
+            enabled: true
+        isolation:
+          enabled: true
+          networkPolicy:
+            enabled: false
+    metadata:
+      labels:
+        loft.sh/import-argocd: "true"
+    spaceTemplate:
+      metadata: {}
