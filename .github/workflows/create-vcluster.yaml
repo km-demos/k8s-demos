@@ -29,3 +29,4 @@ jobs:
         run: |
           # Make sure to recreate if there is an already existing environment
           loft create vcluster $VCLUSTER_NAME --project preview --recreate
+          kubectl config view
