@@ -36,5 +36,5 @@ jobs:
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
           argocd login argocd.k8s.kurtmadel.com --grpc-web --username admin --password ${{ secrets.ARGOCD_ADMIN_PASSWORD }}
-          argocd cluster add $(kubectl config current-context) --exec-command 'loft token --silent'
+          argocd cluster add $(kubectl config current-context) --in-cluster  --exec-command loft --exec-command-args token,--silent
 
