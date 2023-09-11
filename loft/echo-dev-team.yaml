@@ -15,6 +15,7 @@ spec:
     - clusters
     teams:
     - echo-dev
+    - km-demosecho-app
     verbs:
     - get
     - bind
