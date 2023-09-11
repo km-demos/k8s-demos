@@ -30,7 +30,7 @@ jobs:
           # Make sure to recreate if there is an already existing environment
           loft create vcluster $VCLUSTER_NAME --project preview --recreate
           ls -la
-          kubectl config view
+          kubectl config view > kubeconfig.yaml
           loft use vcluster $VCLUSTER_NAME --project preview --print
           ls -la
           kubectl get pods -A
@@ -38,5 +38,5 @@ jobs:
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
           argocd login argocd.k8s.kurtmadel.com --grpc-web --username admin --password ${{ secrets.ARGOCD_ADMIN_PASSWORD }}
-          argocd cluster add $(kubectl config current-context) --exec-command loft --exec-command-args token,--silent
+          argocd cluster add $(kubectl config current-context) --kubeconfig=kubeconfig.yaml
 
