@@ -1,0 +1,31 @@
+name: Create Preview Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      vcluster-name:
+        description: 'Name of vcluster to create'
+        default: "my-vcluster"
+
+env:
+  VCLUSTER_NAME: ${{ inputs.vcluster-name || 'my-vcluster' }}
+# define a job that deploys the preview environment
+jobs:
+  create-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Install Loft CLI
+        uses: loft-sh/setup-loft@v2
+        with:
+          version: v3.2.4
+          url: ${{ secrets.LOFT_URL }}
+          # Specify your Loft access key here
+          access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
+
+      - name: Create Cluster
+        run: |
+          # Make sure to recreate if there is an already existing environment
+          loft create vcluster $VCLUSTER_NAME --project preview --recreate

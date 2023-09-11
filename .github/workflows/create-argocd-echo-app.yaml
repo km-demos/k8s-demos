@@ -64,7 +64,7 @@ jobs:
           -f description='Simple ehco app to use with ArgoCD demo.' \
           -F include_all_branches=false \
           -F private=false
-        echo '{"name":"web","active":true,"events":["push","pull_request","release"],"config":{"url":"https://argocd.examples.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
+        echo '{"name":"web","active":true,"events":["push","pull_request","release"],"config":{"url":"https://argocd.k8s.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
     - id: 'gcp-auth'
       name: 'Authenticate to Google Cloud'
       uses: google-github-actions/auth@v1.1.1
@@ -80,7 +80,7 @@ jobs:
       run: |
         INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$GCP_DNS_ZONE
-        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$REPO_NAME.examples.kurtmadel.com. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
+        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=*.$REPO_NAME-previews.k8s.kurtmadel.com. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$GCP_DNS_ZONE
     - id: create-argocd-app
       run: |
