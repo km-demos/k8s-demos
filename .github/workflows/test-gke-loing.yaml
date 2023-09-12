@@ -1,0 +1,62 @@
+name: test gke login
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: 'Copied Repo Name'
+        type: string
+        default: 'echo-app'
+      cluster-name:
+        description: 'Name of GKE cluster to create app on'
+        default: "k8s-demo-cluster"
+      gcp-region:
+        type: choice
+        description: 'GCP region of cluster'
+        default: "us-east5"
+        options:
+        - us-east5
+        - us-central1
+        - us-east4
+      gcp-zone:
+        type: choice
+        description: 'GCP zone of cluster'
+        default: "a"
+        options: 
+        - a
+        - b
+        - c
+
+env:
+  REPO_NAME: ${{ github.event.inputs.repo_name || 'echo-app' }}
+  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'k8s-demo-cluster' }}
+  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
+  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  GCP_DNS_ZONE: k8s-kurt-madel
+
+jobs:
+  test-gke-login:
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - id: 'gcp-auth'
+      name: 'Authenticate to Google Cloud'
+      uses: google-github-actions/auth@v1.1.1
+      with:
+        workload_identity_provider: ${{ secrets.WIF_POOL }}
+        service_account: ${{ secrets.WIF_SA_EMAIL }}
+        
+    - id: get-credentials
+      uses: google-github-actions/get-gke-credentials@v1.0.2
+      with:
+        cluster_name: ${{ env.CLUSTER_NAME }}
+        location: ${{ env.GCP_ZONE }}
+
+    - id: kubectl-test
+      run: |
+        kubectl get pods -A

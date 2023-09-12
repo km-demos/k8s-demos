@@ -27,15 +27,15 @@ on:
         default: "3.2.4"
 
 env:
-  CLUSTER_NAME: ${{ inputs.cluster-name || 'demo-cluster' }}
-  GCP_REGION: ${{ inputs.gcp-region || 'us-central1' }}
-  GCP_ZONE: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
+  CLUSTER_NAME: ${{ inputs.cluster-name || 'k8s-demo-cluster' }}
+  GCP_REGION: ${{ inputs.gcp-region || 'us-east5' }}
+  GCP_ZONE: ${{ inputs.gcp-region || 'us-east5' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
   TF_VAR_cluster_name: ${{ inputs.cluster-name || 'demo-cluster' }}
-  TF_VAR_region: ${{ inputs.gcp-region || 'us-central1' }}
-  TF_VAR_zone: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
-  GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
+  TF_VAR_region: ${{ inputs.gcp-region || 'us-east5' }}
+  TF_VAR_zone: ${{ inputs.gcp-region || 'us-east5' }}-${{ inputs.gcp-zone || 'a' }}
+  GCP_SA_EMAIL: ${{ secrets.WIF_SA_EMAIL }}
   DNS_ZONE: k8s-kurt-madel
   DNS_HOST: "*.k8s.kurtmadel.com"
   LOFT_VERSION: ${{ inputs.loft-version || '3.2.4' }}
@@ -92,7 +92,7 @@ jobs:
         uses: google-github-actions/auth@v1.1.1
         with:
           workload_identity_provider: ${{ secrets.WIF_POOL }}
-          service_account: ${{ secrets.SA_EMAIL }}
+          service_account: ${{ secrets.WIF_SA_EMAIL }}
 
       - id: get-credentials
         uses: google-github-actions/get-gke-credentials@v1.0.2

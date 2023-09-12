@@ -32,7 +32,7 @@ env:
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  GCP_DNS_ZONE: examples-kurtmadel
+  GCP_DNS_ZONE: k8s-kurt-madel
 
 jobs:
   create-argocd-echo-app:
@@ -70,7 +70,7 @@ jobs:
       uses: google-github-actions/auth@v1.1.1
       with:
         workload_identity_provider: ${{ secrets.WIF_POOL }}
-        service_account: ${{ secrets.SA_EMAIL }}
+        service_account: ${{ secrets.WIF_SA_EMAIL }}
     - id: get-credentials
       uses: google-github-actions/get-gke-credentials@v1.0.2
       with:
