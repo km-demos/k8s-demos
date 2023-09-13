@@ -8,7 +8,7 @@ on:
         default: 'echo-app'
       cluster-name:
         description: 'Name of GKE cluster to delete echo app from'
-        default: "demo-cluster"
+        default: "k8s-demo-cluster"
       gcp-region:
         type: choice
         description: 'GCP region of cluster'
@@ -20,7 +20,7 @@ on:
       gcp-zone:
         type: choice
         description: 'GCP zone of cluster'
-        default: "a"
+        default: "b"
         options: 
         - a
         - b
@@ -28,7 +28,7 @@ on:
 
 env:
   REPO_NAME: ${{ github.event.inputs.repo_name || 'echo-app' }}
-  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'demo-cluster' }}
+  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'k8s-demo-cluster' }}
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
