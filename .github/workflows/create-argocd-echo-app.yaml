@@ -64,7 +64,8 @@ jobs:
           -f description='Simple ehco app to use with ArgoCD demo.' \
           -F include_all_branches=false \
           -F private=false
-        echo '{"name":"web","active":true,"events":["push","pull_request","release"],"config":{"url":"https://argocd.k8s.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
+        echo '{"name":"web","active":true,"events":["push","release"],"config":{"url":"https://argocd.k8s.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
+        echo '{"name":"web","active":true,"events":["pull_request"],"config":{"url":"https://argocd-appset.k8s.kurtmadel.com/api/webhook","secret":"'"${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }}"'","content_type":"json","insecure_ssl":"0"}}' | gh api repos/km-demos/$REPO_NAME/hooks --input - -X POST
     - id: 'gcp-auth'
       name: 'Authenticate to Google Cloud'
       uses: google-github-actions/auth@v1.1.1
