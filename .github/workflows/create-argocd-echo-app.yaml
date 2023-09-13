@@ -137,6 +137,7 @@ jobs:
         git remote set-url origin https://x-access-token:$GITHUB_ACCESS_TOKEN@github.com/km-demos/$REPO_NAME.git
         git checkout main
 
+        sed -i "s|REPO_NAME|$REPO_NAME|g" helm-chart/Chart.yaml
         sed -i "s|REPO_NAME|$REPO_NAME|g" helm-chart/values.yaml
         git commit -am "updating values.yaml with repo name"
         git push origin main
