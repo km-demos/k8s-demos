@@ -20,7 +20,7 @@ on:
       gcp-zone:
         type: choice
         description: 'GCP zone of cluster'
-        default: "a"
+        default: "b"
         options: 
         - a
         - b
