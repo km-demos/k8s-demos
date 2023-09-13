@@ -79,6 +79,6 @@ jobs:
     - id: gcp-cleanup
       run: |
         kubectl delete application --ignore-not-found=true -n argocd $REPO_NAME
-        kubectl delete applicationsest --ignore-not-found=true -n argocd $REPO_NAME
+        kubectl delete applicationset --ignore-not-found=true -n argocd $REPO_NAME
         kubectl delete ns --ignore-not-found=true $REPO_NAME
         gcloud dns record-sets delete $REPO_NAME.k8s.kurtmadel.com. --type=A --zone=$GCP_DNS_ZONE --project=$GCP_PROJECT_ID
