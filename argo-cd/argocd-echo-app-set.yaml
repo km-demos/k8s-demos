@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: REPO_NAME
+spec:
+  generators:
+  - pullRequest:
+      github:
+        # The GitHub organization or user.
+        owner: km-demos
+        # The Github repository
+        repo: REPO_NAME
+        # (optional) use a GitHub App to access the API instead of a PAT.
+        #appSecretName: github-app-repo-creds
+        # Labels is used to filter the PRs that you want to target. (optional)
+        labels:
+        - preview
+      requeueAfterSeconds: 1800
+  template:
+    metadata:
+      name: 'REPO_NAME-{{branch}}-{{number}}'
+    spec:
+      source:
+        repoURL: 'https://github.com/km-demos/REPO_NAME.git'
+        targetRevision: '{{head_sha}}'
+        path: helm-chart/
+        helm:
+          parameters:
+          - name: "image.tag"
+            value: "{{head_short_sha}}"
+      project: "loft-preview"
+      destination:
+        server: ${{ secrets.LOFT_URL }}/kubernetes/project/preview/virtualcluster/REPO_NAME-pr-{{number}}
+        namespace: default

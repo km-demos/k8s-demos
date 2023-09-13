@@ -159,8 +159,10 @@ jobs:
         run: |
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
-          helm upgrade --install argo-cd argo/argo-cd \
-            -n argo-cd --create-namespace --version 5.42.2 --wait --values ./argo-cd/values.yaml
+          helm upgrade --install argocd argo/argo-cd \
+            -n argocd --create-namespace --version 5.42.2 --wait \
+            --set configs.secret.githubSecret=${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }} \
+            --values ./argo-cd/values.yaml
         
       - id: install-prometheus
         run: |
