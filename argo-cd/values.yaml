@@ -123,9 +123,6 @@ applicationSet:
         cert-manager.io/cluster-issuer: letsencrypt-prod
         kubernetes.io/ingress.class: nginx
         kubernetes.io/tls-acme: 'true'
-        nginx.ingress.kubernetes.io/ssl-passthrough: 'true'
-        nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS'
-
       # -- Additional ingress labels for dedicated [gRPC-ingress]
       labels: {}
       # -- Defines which ingress controller will implement the resource [gRPC-ingress]
@@ -144,10 +141,7 @@ applicationSet:
         - secretName: argocd-appset-tls-secret
           hosts:
             - argocd-appset.k8s.kurtmadel.com
-
-      # -- Uses `server.service.servicePortHttps` instead `server.service.servicePortHttp`
-      https: true
-
+            
 ## Notifications controller
 notifications:
   # -- Enable notifications controller
