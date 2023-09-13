@@ -95,6 +95,7 @@ jobs:
           #delete existing record if it exists
           gcloud dns --project=$GCP_PROJECT_ID record-sets delete loft.$DNS_HOST_SUFFIX. --type=A --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets delete argocd.$DNS_HOST_SUFFIX. --type=A --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets delete argocd-appset.$DNS_HOST_SUFFIX. --type=A --zone=$DNS_ZONE
       - id: config-dns
         run: |
           #get ingress-nginx lb ip
@@ -107,6 +108,10 @@ jobs:
           #create DNS entry for argocd hostname to map to that IP
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=argocd.$DNS_HOST_SUFFIX. --ttl=300 --type=A --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
+          #create DNS entry for argocd-appset hostname to map to that IP
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
+          gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=argocd-appset.$DNS_HOST_SUFFIX. --ttl=300 --type=A --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
 
       - id: install-loft
