@@ -32,7 +32,7 @@ env:
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  GCP_DNS_ZONE: examples-kurtmadel
+  GCP_DNS_ZONE: k8s-kurt-madel
 
 jobs:
   delete-argocd-echo-app:
