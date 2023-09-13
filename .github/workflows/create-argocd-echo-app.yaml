@@ -72,7 +72,7 @@ jobs:
           -H "Authorization: Bearer $GITHUB_TOKEN" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/km-demos/$REPO_NAME/labels \
-          -d '{"name":"preview","description":"Create preview environment for pull request.","color":"00BDFF"}'
+          -d '{"name":"preview","description":"Create preview environment for pull request","color":"00BDFF"}'
     - id: 'gcp-auth'
       name: 'Authenticate to Google Cloud'
       uses: google-github-actions/auth@v1.1.1
