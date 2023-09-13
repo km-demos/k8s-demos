@@ -77,10 +77,11 @@ jobs:
         cluster_name: ${{ env.CLUSTER_NAME }}
         location: ${{ env.GCP_ZONE }}
     - id: create-dns-entry
+      continue-on-error: true
       run: |
         INGRESS_IP=$(kubectl get services -n ingress-nginx | grep LoadBalancer | awk '{print $4}')
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$GCP_DNS_ZONE
-        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=*.$REPO_NAME-previews.k8s.kurtmadel.com. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
+        gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=$REPO_NAME.k8s.kurtmadel.com. --ttl=300 --type=A --zone=$GCP_DNS_ZONE
         gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$GCP_DNS_ZONE
     - id: create-argocd-app
       run: |
@@ -91,6 +92,11 @@ jobs:
         yq e -i ".spec.source.repoURL = \"https://github.com/km-demos/$REPO_NAME.git\"" argo-cd/argocd-app.yaml
         yq e -i ".spec.destination.namespace = \"$REPO_NAME\"" argo-cd/argocd-app.yaml
         kubectl apply -f argo-cd/argocd-app.yaml
+    - id: create-argocd-pr-app-set
+      run: |
+        sed -i "s|REPO_NAME|$REPO_NAME|g" argo-cd/argocd-echo-app-set.yaml
+        sed -i "s|LOFT_URL|${{ secrets.LOFT_URL }}|g" argo-cd/argocd-echo-app-set.yaml
+        kubectl apply -f argo-cd/argocd-echo-app-set.yaml
     - id: branch-protection
       name: branch-protection
       shell: bash
@@ -128,17 +134,21 @@ jobs:
         git remote set-url origin https://x-access-token:$GITHUB_ACCESS_TOKEN@github.com/km-demos/$REPO_NAME.git
         git checkout main
 
+        sed -i "s|REPO_NAME|$REPO_NAME|g" helm-chart/values.yaml
+        git commit -am "updating values.yaml with repo name"
+        git push origin main
+
         git checkout -b fix-err-image-pull
         curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-err-image-pull/helm-chart/values.yaml > helm-chart/values.yaml
         git add *
-        git commit -am "udpating values.yaml to fix ImagePullBackOff"
+        git commit -am "updating values.yaml to fix ImagePullBackOff"
         git push origin fix-err-image-pull
 
         git checkout -b fix-crash-loop-backoff
         curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-crash-loop-backoff/helm-chart/values.yaml > helm-chart/values.yaml
         curl https://raw.githubusercontent.com/km-demos/echo-app-template/fix-crash-loop-backoff/helm-chart/templates/deployments.yaml > helm-chart/templates/deployments.yaml
         git add *
-        git commit -am "udpates to fix CrashLoopBackOff"
+        git commit -am "udadtes to fix CrashLoopBackOff"
         git push origin fix-crash-loop-backoff
             
         curl -H 'Accept: application/vnd.github.antiope-preview+json' \

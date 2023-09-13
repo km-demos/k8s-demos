@@ -26,9 +26,26 @@ spec:
         path: helm-chart/
         helm:
           parameters:
+          - name: "image.repository"
+            value: ghcr.io/km-demos/REPO_NAME
           - name: "image.tag"
             value: "{{head_short_sha}}"
+          - name: "image.args.text"
+            value: "Hello from REPO_NAME pr-{{number}} commit {{head_short_sha}}"
+          - name: "ingress.hosts[0].host"
+            value: REPO_NAME-pr-{{number}}.previews.k8s.kurtmadel.com
+          - name: "ingress.tls[0].hosts[0]"
+            value: REPO_NAME-pr-{{number}}.previews.k8s.kurtmadel.com
+          - name: "ingress.tls[0].secretName"
+            value: preview-tls
       project: "loft-preview"
       destination:
-        server: ${{ secrets.LOFT_URL }}/kubernetes/project/preview/virtualcluster/REPO_NAME-pr-{{number}}
-        namespace: default
+        server: LOFT_URL/kubernetes/project/preview/virtualcluster/REPO_NAME-pr-{{number}}
+        namespace: preview-REPO_NAME
+      info:
+        - name: Preview App Link
+          value: >-
+            https://REPO_NAME-pr-{{number}}.previews.k8s.kurtmadel.com
+        - name: GitHub PR
+          value: >-
+            https://github.com/km-demos/REPO_NAME/pull/{{number}}
