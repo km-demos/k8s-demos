@@ -113,7 +113,7 @@ jobs:
         run: |
           helm repo add prometheus= https://prometheus-community.github.io/helm-charts
           helm repo update
-          helm install prometheus prometheus=/kube-prometheus-stack \
+          helm upgrade --install prometheus prometheus=/kube-prometheus-stack \
             --namespace monitoring --create-namespace --wait
 
       - id: install-loft
@@ -125,7 +125,7 @@ jobs:
         run: |
           helm repo add loft https://charts.loft.sh
           helm repo update
-          helm upgrade loft loft/loft --install --version 3.2.4 \
+          helm upgrade loft loft/loft --install --version $LOFT_VERSION \
             --namespace loft \
             --create-namespace \
             --set admin.password=$LOFT_ADMIN_PASSWORD \
@@ -140,8 +140,8 @@ jobs:
         run: |
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
-          helm upgrade --install argo-cd argo/argo-cd \
-            -n argo-cd --create-namespace --version 5.42.2 --wait --values ./argo-cd/values.yaml
+          helm upgrade --install argocd argo/argo-cd \
+            -n argocd --create-namespace --version 5.42.2 --wait --values ./argo-cd/values.yaml
           
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 

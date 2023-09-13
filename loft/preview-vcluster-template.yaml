@@ -1,26 +1,23 @@
-apiVersion: management.loft.sh/v1
 kind: VirtualClusterTemplate
+apiVersion: management.loft.sh/v1
 metadata:
   name: preview-template
 spec:
-  access:
-  - subresources:
-    - '*'
-    users:
-    - admin
-    verbs:
-    - '*'
   displayName: preview-template
   owner:
     user: admin
   template:
+    metadata:
+      labels:
+        loft.sh/import-argocd: 'true'
+      annotations:
+        sleepmode.loft.sh/delete-after: '36000'
+        sleepmode.loft.sh/sleep-after: '600'
     access:
       rules:
-      - clusterRole: cluster-admin
-        users:
-        - admin
-    accessPoint:
-      ingress: {}
+        - users:
+            - admin
+          clusterRole: cluster-admin
     helmRelease:
       chart: {}
       values: |-
@@ -31,8 +28,29 @@ spec:
           enabled: true
           networkPolicy:
             enabled: false
-    metadata:
-      labels:
-        loft.sh/import-argocd: "true"
+        plugin:
+          cert-manager-plugin:
+            image: ghcr.io/loft-sh/vcluster-plugins/cert-manager-plugin:0.3.0
+            imagePullPolicy: IfNotPresent
+            rbac:
+              role:
+                extraRules:
+                  - apiGroups: ["cert-manager.io"]
+                    resources: ["issuers", "certificates"]
+                    verbs: ["create", "delete", "patch", "update", "get", "list", "watch"]
+              clusterRole:
+                extraRules:
+                  - apiGroups: ["apiextensions.k8s.io"]
+                    resources: ["customresourcedefinitions"]
+                    verbs: ["get", "list", "watch"]
+    accessPoint:
+      ingress: {}
     spaceTemplate:
       metadata: {}
+  access:
+    - verbs:
+        - '*'
+      subresources:
+        - '*'
+      users:
+        - admin

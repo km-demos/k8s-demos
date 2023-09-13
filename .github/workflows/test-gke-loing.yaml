@@ -20,7 +20,7 @@ on:
       gcp-zone:
         type: choice
         description: 'GCP zone of cluster'
-        default: "a"
+        default: "b"
         options: 
         - a
         - b
@@ -30,7 +30,7 @@ env:
   REPO_NAME: ${{ github.event.inputs.repo_name || 'echo-app' }}
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'k8s-demo-cluster' }}
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
-  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'b' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   GCP_DNS_ZONE: k8s-kurt-madel
 
@@ -50,7 +50,7 @@ jobs:
       with:
         workload_identity_provider: ${{ secrets.WIF_POOL }}
         service_account: ${{ secrets.WIF_SA_EMAIL }}
-        
+
     - id: get-credentials
       uses: google-github-actions/get-gke-credentials@v1.0.2
       with:

@@ -110,7 +110,7 @@ repoServer:
 ## ApplicationSet controller
 applicationSet:
   # -- Enable ApplicationSet controller
-  enabled: false
+  enabled: true
 
 ## Notifications controller
 notifications:
