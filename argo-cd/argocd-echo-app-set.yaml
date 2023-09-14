@@ -15,12 +15,15 @@ spec:
         #appSecretName: github-app-repo-creds
         # Labels is used to filter the PRs that you want to target. (optional)
         labels:
-        - preview
-      requeueAfterSeconds: 1800
+        - preview-cluster-ready
+      requeueAfterSeconds: 180
   template:
     metadata:
       name: 'REPO_NAME-{{branch}}-{{number}}'
     spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
       source:
         repoURL: 'https://github.com/km-demos/REPO_NAME.git'
         targetRevision: '{{head_sha}}'
@@ -35,6 +38,14 @@ spec:
             value: "Hello from REPO_NAME pr-{{number}} commit {{head_short_sha}}"
           - name: "ingress.hosts[0].host"
             value: REPO_NAME-pr-{{number}}.previews.k8s.kurtmadel.com
+          - name: ingress.hosts[0].paths[0].backend.service.name
+            value: REPO_NAME
+          - name: ingress.hosts[0].paths[0].backend.service.port.name
+            value: http
+          - name: ingress.hosts[0].paths[0].path
+            value: /
+          - name: ingress.hosts[0].paths[0].pathType
+            value: prefix
           - name: "ingress.tls[0].hosts[0]"
             value: REPO_NAME-pr-{{number}}.previews.k8s.kurtmadel.com
           - name: "ingress.tls[0].secretName"

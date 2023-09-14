@@ -8,8 +8,14 @@ spec:
     user: admin
   quotas:
     project:
+      spaceinstances.active.template=isolated-space: '4'
+      spaceinstances.template=isolated-space: '8'
       requests.cpu: '8'
+      virtualclusterinstances.active.template=preview-template: '4'
+      virtualclusterinstances.template=preview-template: '8'
     user:
+      virtualclusterinstances.template=preview-template: '2'
+      spaceinstances.template=isolated-space: '2'
       requests.cpu: '4'
   allowedClusters:
     - name: '*'

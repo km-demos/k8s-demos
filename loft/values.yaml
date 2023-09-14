@@ -172,7 +172,13 @@ config:
       orgs:
       - name: km-demos
         teams:
-        - echo-app
+        - echo-appuiSettings:
+  uiSettings:
+    navBarButtons:
+    - icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+      link: https://github.com/km-demos
+      position: BottomStart
+      text: km-demos
 # Enables running loft agent with a security context that:
 # - disables privileged escalation
 # - drops all capabilities
