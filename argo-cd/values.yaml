@@ -1,7 +1,9 @@
 ## Argo CD configuration
 ## Ref: https://github.com/argoproj/argo-cd
 ##
-
+global:
+  nodeSelector: 
+    kubernetes.io/arch: arm64
 ## Server
 server:
   # -- Argo CD server name

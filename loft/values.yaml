@@ -1,6 +1,10 @@
 # If agentOnly is true, will deploy only the agent
 agentOnly: false
 
+#enable deploying to arm on GKE
+nodeSelector:
+  kubernetes.io/arch: arm64
+
 # If an admin user should be created during deployment
 admin:
   create: true

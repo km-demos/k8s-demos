@@ -73,6 +73,7 @@ jobs:
           helm repo update
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
             --version v1.12.3 \
+            --set nodeSelector."kubernetes\.io/arch"=arm64 \
             --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
             --set extraArgs={--issuer-ambient-credentials=true} \
             --set installCRDs=true --wait
@@ -87,6 +88,7 @@ jobs:
           helm upgrade --install ingress-nginx ingress-nginx \
             --repo https://kubernetes.github.io/ingress-nginx \
             --set-string controller.config.hsts=false \
+            --set controller.nodeSelector."kubernetes\.io/arch"=arm64 \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
       
       - id: delete-dns
@@ -145,9 +147,10 @@ jobs:
         
       - id: install-prometheus
         run: |
-          helm repo add prometheus= https://prometheus-community.github.io/helm-charts
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm repo update
-          helm upgrade --install prometheus prometheus=/kube-prometheus-stack \
+          helm upgrade --install prometheus prometheus/kube-prometheus-stack \
+            --set prometheusOperator.nodeSelector."kubernetes\.io/arch"=arm64 \
             --namespace monitoring --create-namespace --wait
           
       - id: get-pods-after-bootstrap
