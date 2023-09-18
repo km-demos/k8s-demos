@@ -74,6 +74,9 @@ jobs:
           helm upgrade --install cert-manager cert-manager/cert-manager --namespace cert-manager --create-namespace \
             --version v1.12.3 \
             --set nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set webhook.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set cainjector.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set startupapicheck.nodeSelector."kubernetes\.io/arch"=arm64 \
             --set global.leaderElection.namespace=cert-manager  --set prometheus.enabled=false \
             --set extraArgs={--issuer-ambient-credentials=true} \
             --set installCRDs=true --wait
