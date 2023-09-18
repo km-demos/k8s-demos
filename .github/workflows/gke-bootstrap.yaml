@@ -92,6 +92,8 @@ jobs:
             --repo https://kubernetes.github.io/ingress-nginx \
             --set-string controller.config.hsts=false \
             --set controller.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set controller.admissionWebhooks.patch.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set defaultBackend.nodeSelector."kubernetes\.io/arch"=arm64 \
             -n ingress-nginx --create-namespace --version 4.7.1 --wait
       
       - id: delete-dns
@@ -154,6 +156,10 @@ jobs:
           helm repo update
           helm upgrade --install prometheus prometheus/kube-prometheus-stack \
             --set prometheusOperator.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set prometheusOperator.admissionWebhooks.patch.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set alertmanager.alertmanagerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set prometheus.prometheusSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set thanosRuler.thanosRulerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
             --namespace monitoring --create-namespace --wait
           
       - id: get-pods-after-bootstrap
