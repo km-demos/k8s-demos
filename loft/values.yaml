@@ -176,7 +176,7 @@ config:
       orgs:
       - name: km-demos
         teams:
-        - echo-appuiSettings:
+        - echo-app
   uiSettings:
     navBarButtons:
     - icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
