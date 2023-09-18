@@ -120,6 +120,19 @@ jobs:
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=argocd-appset.$DNS_HOST_SUFFIX. --ttl=300 --type=A --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
+            --values ./argo-cd/values.yaml
+        
+      - id: install-prometheus
+        run: |
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install prometheus prometheus/kube-prometheus-stack \
+            --set prometheusOperator.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set prometheusOperator.admissionWebhooks.patch.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set alertmanager.alertmanagerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set prometheus.prometheusSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set thanosRuler.thanosRulerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --namespace monitoring --create-namespace --wait
 
       - id: install-loft
         env: 
@@ -148,19 +161,6 @@ jobs:
           helm upgrade --install argocd argo/argo-cd \
             -n argocd --create-namespace --version 5.42.2 --wait \
             --set configs.secret.githubSecret=${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }} \
-            --values ./argo-cd/values.yaml
-        
-      - id: install-prometheus
-        run: |
-          helm repo add prometheus https://prometheus-community.github.io/helm-charts
-          helm repo update
-          helm upgrade --install prometheus prometheus/kube-prometheus-stack \
-            --set prometheusOperator.nodeSelector."kubernetes\.io/arch"=arm64 \
-            --set prometheusOperator.admissionWebhooks.patch.nodeSelector."kubernetes\.io/arch"=arm64 \
-            --set alertmanager.alertmanagerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
-            --set prometheus.prometheusSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
-            --set thanosRuler.thanosRulerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
-            --namespace monitoring --create-namespace --wait
           
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 
