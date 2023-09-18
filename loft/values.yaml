@@ -5,6 +5,10 @@ agentOnly: false
 nodeSelector:
   kubernetes.io/arch: arm64
 
+agentValues:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
 # If an admin user should be created during deployment
 admin:
   create: true
