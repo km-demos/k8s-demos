@@ -144,8 +144,9 @@ jobs:
           LOFT_GITHUB_CLIENT_ID: ${{ secrets.LOFT_GITHUB_CLIENT_ID }}
           LOFT_GITHUB_CLIENT_SECRET: ${{ secrets.LOFT_GITHUB_CLIENT_SECRET }}
         run: |
-          helm upgrade loft loft --install --version $LOFT_VERSION \
-            --repo https://charts.loft.sh/ \
+          helm repo add loft https://charts.loft.sh
+          helm repo update
+          helm upgrade loft loft/loft --install --version $LOFT_VERSION \
             --namespace loft \
             --create-namespace \
             --set loftHost=$LOFT_HOST
