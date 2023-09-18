@@ -39,7 +39,7 @@ env:
   DNS_ZONE: k8s-kurt-madel
   DNS_HOST: "*.k8s.kurtmadel.com"
   LOFT_VERSION: ${{ inputs.loft-version || '3.2.4' }}
-  ARGOCD_VERSION: '5.42.2'
+  ARGOCD_VERSION: '5.46.4'
 
 jobs:
   terraform:
