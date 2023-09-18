@@ -54,7 +54,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     preemptible = false
     machine_type = var.machine_type
-    disk_size_gb = 20
+    disk_size_gb = 100
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -65,23 +65,6 @@ resource "google_container_node_pool" "primary_nodes" {
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
-    ]
-  }
-}
-
-resource "google_service_account" "cert_manager_dns_admin" {
-  project      = var.project
-  account_id   = "dns01-solver"
-  display_name = "dns01-solver"
-  description  = "dns01-solver for cert manager"
-}
-
-data "google_iam_policy" "dns_admin" {
-  binding {
-    role = "roles/dns.admin"
-
-    members = [
-       "serviceAccount:${google_service_account.cert_manager_dns_admin.email}",
     ]
   }
 }

@@ -9,7 +9,7 @@ on:
       gcp-region:
         type: choice
         description: 'GCP region to create cluster'
-        default: "us-east5"
+        default: "us-central1"
         options:
         - us-east5
         - us-central1
@@ -28,17 +28,18 @@ on:
 
 env:
   CLUSTER_NAME: ${{ inputs.cluster-name || 'k8s-demo-cluster' }}
-  GCP_REGION: ${{ inputs.gcp-region || 'us-east5' }}
-  GCP_ZONE: ${{ inputs.gcp-region || 'us-east5' }}-${{ inputs.gcp-zone || 'a' }}
+  GCP_REGION: ${{ inputs.gcp-region || 'us-central1' }}
+  GCP_ZONE: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   TF_VAR_project: ${{ secrets.GCP_PROJECT }}
   TF_VAR_cluster_name: ${{ inputs.cluster-name || 'demo-cluster' }}
-  TF_VAR_region: ${{ inputs.gcp-region || 'us-east5' }}
-  TF_VAR_zone: ${{ inputs.gcp-region || 'us-east5' }}-${{ inputs.gcp-zone || 'a' }}
+  TF_VAR_region: ${{ inputs.gcp-region || 'us-central1' }}
+  TF_VAR_zone: ${{ inputs.gcp-region || 'us-central1' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_SA_EMAIL: ${{ secrets.WIF_SA_EMAIL }}
   DNS_ZONE: k8s-kurt-madel
   DNS_HOST: "*.k8s.kurtmadel.com"
   LOFT_VERSION: ${{ inputs.loft-version || '3.2.4' }}
+  ARGOCD_VERSION: '5.42.2'
 
 jobs:
   terraform:
@@ -160,7 +161,7 @@ jobs:
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
           helm upgrade --install argocd argo/argo-cd \
-            -n argocd --create-namespace --version 5.42.2 --wait \
+            -n argocd --create-namespace --version $ARGOCD_VERSION --wait \
             --set configs.secret.githubSecret=${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }} \
             --values ./argo-cd/values.yaml
         

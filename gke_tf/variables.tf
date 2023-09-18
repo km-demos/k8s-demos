@@ -9,10 +9,10 @@ variable "region" {
 
 variable "zone" {
   type = string
-  default = "us-central1-c"
+  default = "us-central1-a"
 }
 
 variable "cluster_name" {
   type = string
-  default = "demo-cluster"
+  default = "k8s-demo-cluster"
 }

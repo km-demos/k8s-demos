@@ -16,7 +16,7 @@ variable "cluster_name" {
 
 variable "machine_type" {
   type = string
-  default = "n2-standard-4"
+  default = "t2a-standard-8"
 }
 
 variable "min_node_count" {
@@ -26,5 +26,5 @@ variable "min_node_count" {
 
 variable "max_node_count" {
   type = number
-  default = 5
+  default = 4
 }
