@@ -131,6 +131,9 @@ jobs:
             --set alertmanager.alertmanagerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
             --set prometheus.prometheusSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
             --set thanosRuler.thanosRulerSpec.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set kube-state-metrics.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set prometheus-node-exporter.nodeSelector."kubernetes\.io/arch"=arm64 \
+            --set grafana.nodeSelector."kubernetes\.io/arch"=arm64 \
             --namespace monitoring --create-namespace --wait
 
       - id: install-loft
