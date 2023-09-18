@@ -120,7 +120,6 @@ jobs:
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction start --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction add $INGRESS_IP --name=argocd-appset.$DNS_HOST_SUFFIX. --ttl=300 --type=A --zone=$DNS_ZONE
           gcloud dns --project=$GCP_PROJECT_ID record-sets transaction execute --zone=$DNS_ZONE
-            --values ./argo-cd/values.yaml
         
       - id: install-prometheus
         run: |
@@ -161,6 +160,7 @@ jobs:
           helm upgrade --install argocd argo/argo-cd \
             -n argocd --create-namespace --version 5.42.2 --wait \
             --set configs.secret.githubSecret=${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }} \
+            --values ./argo-cd/values.yaml
           
       - id: get-pods-after-bootstrap
         run: kubectl get pods -A 
