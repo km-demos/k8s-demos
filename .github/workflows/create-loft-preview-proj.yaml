@@ -20,7 +20,7 @@ jobs:
       - name: Install Loft CLI
         uses: loft-sh/setup-loft@v2
         with:
-          version: ${ env.LOFT_CLI_VERSION }
+          version: ${{ env.LOFT_CLI_VERSION }}
           url: ${{ secrets.LOFT_URL }}
           # Specify your Loft access key here
           access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
