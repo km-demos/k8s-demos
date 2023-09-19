@@ -3,25 +3,19 @@ kind: Team
 metadata:
   name: echo-dev
 spec:
-  access:
-  - subresources:
-    - '*'
-    users:
-    - admin
-    verbs:
-    - '*'
-  - name: loft-access
-    subresources:
-    - clusters
-    teams:
-    - echo-dev
-    - km-demosecho-app
-    verbs:
-    - get
-    - bind
   displayName: echo-dev
-  owner:
-    user: admin
   users:
-  - admin
-status: {}
+    - admin
+  groups:
+    - km-demos:echo-app
+  clusterRoles:
+    - name: loft-management-project-viewer
+  access:
+    - name: loft-access
+      verbs:
+        - get
+        - bind
+      subresources:
+        - clusters
+      teams:
+        - echo-dev
