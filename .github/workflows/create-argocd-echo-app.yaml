@@ -94,6 +94,11 @@ jobs:
         yq e -i ".spec.source.repoURL = \"https://github.com/km-demos/$REPO_NAME.git\"" argo-cd/argocd-app.yaml
         yq e -i ".spec.destination.namespace = \"$REPO_NAME\"" argo-cd/argocd-app.yaml
         kubectl apply -f argo-cd/argocd-app.yaml
+    - id: create-argocd-pr-app-set
+      run: |
+        sed -i "s|REPO_NAME|$REPO_NAME|g" argo-cd/argocd-echo-app-set.yaml
+        sed -i "s|LOFT_URL|${{ secrets.LOFT_URL }}|g" argo-cd/argocd-echo-app-set.yaml
+        kubectl apply -f argo-cd/argocd-echo-app-set.yaml
     - id: branch-protection
       name: branch-protection
       shell: bash

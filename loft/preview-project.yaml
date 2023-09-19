@@ -67,7 +67,9 @@ spec:
   argoCD:
     enabled: true
     cluster: loft-cluster
-    namespace: argo-cd
+    namespace: argocd
+    project:
+      enabled: true
     sso:
       enabled: true
       host: https://argocd.k8s.kurtmadel.com

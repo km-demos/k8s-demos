@@ -41,7 +41,7 @@ resource "google_container_cluster" "primary" {
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name = "main-node-pool"
+  name = "arm-node-pool"
   location = google_container_cluster.primary.location
   cluster = google_container_cluster.primary.name
   initial_node_count = 1
