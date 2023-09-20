@@ -155,6 +155,7 @@ jobs:
             --set config.auth.github.clientSecret=$LOFT_GITHUB_CLIENT_SECRET \
             --set config.auth.github.redirectURI=https://$LOFT_HOST/auth/github/callback \
             --values ./loft/values.yaml --wait
+          helm upgrade loft-agent loft-agent/loft --install --namespace loft   --create-namespace
       
       - id: install-argocd 
         run: |

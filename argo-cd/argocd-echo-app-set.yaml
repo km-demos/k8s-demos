@@ -24,6 +24,8 @@ spec:
       syncPolicy:
         automated:
           selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
       source:
         repoURL: 'https://github.com/km-demos/REPO_NAME.git'
         targetRevision: '{{head_sha}}'
