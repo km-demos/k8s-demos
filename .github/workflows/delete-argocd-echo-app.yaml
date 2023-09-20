@@ -3,9 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: 'Echo App Repo to delete'
+        description: 'Echo App Repo to cleanup'
         type: string
         default: 'echo-app'
+      keep-repo:
+        type: boolean
+        description: 'Do not delete repo'
+        default: false
       cluster-name:
         description: 'Name of GKE cluster to delete echo app from'
         default: "k8s-demo-cluster"
@@ -28,6 +32,7 @@ on:
 
 env:
   REPO_NAME: ${{ github.event.inputs.repo_name || 'echo-app' }}
+  KEEP_REPO: ${{ github.event.inputs.keep-repo || false }}
   CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'k8s-demo-cluster' }}
   GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
@@ -42,7 +47,7 @@ jobs:
       contents: read
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Generate km-demos GitHub App token
       id: generate_token
       uses: tibdex/github-app-token@v1.8.0
@@ -50,6 +55,7 @@ jobs:
           app_id: ${{ secrets.KM_DEMOS_GITHUB_APP_ID }}
           private_key: ${{ secrets.KM_DEMOS_GITHUB_APP_KEY }}
     - name: github-cleanup
+      if: !(github.env.KEEP_REPO)
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
@@ -76,6 +82,20 @@ jobs:
         kubectl delete applicationset --ignore-not-found=true -n argocd $REPO_NAME
         kubectl delete ns --ignore-not-found=true $REPO_NAME
         gcloud dns record-sets delete $REPO_NAME.k8s.kurtmadel.com. --type=A --zone=$GCP_DNS_ZONE --project=$GCP_PROJECT_ID
+
+    - name: Install Loft CLI
+      uses: loft-sh/setup-loft@v2
+      with:
+        version: ${{ env.LOFT_CLI_VERSION }}
+        url: ${{ secrets.LOFT_URL }}
+        # Specify your Loft access key here
+        access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
+
+    - name: Delete Loft Preview Demo User
+      run: |
+        loft use management
+        kubectl delete users.management.loft.sh beedemo-dev
+
     - name: github-delete-package
       shell: bash
       run: |

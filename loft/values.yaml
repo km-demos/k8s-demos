@@ -77,7 +77,8 @@ tls:
 
 # Additional enviroment variables in the form of
 # VAR_NAME: VAR_VALUE
-env: {}
+env:
+  DISABLE_AGENT: true
 
 # Additional environment variables in the form of
 # VAR_NAME:
