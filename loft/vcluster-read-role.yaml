@@ -1,0 +1,29 @@
+kind: ClusterRoleTemplate
+apiVersion: management.loft.sh/v1
+metadata:
+  name: vcluster-instance-read
+spec:
+  displayName: vcluster Read
+  description: Allows get, watch and list for all clusters in project.
+  owner:
+    user: admin
+  management: true
+  access:
+    - verbs:
+        - '*'
+      subresources:
+        - '*'
+      users:
+        - admin
+  clusterRoleTemplate:
+    metadata:
+      creationTimestamp: null
+    rules:
+      - verbs:
+          - get
+          - watch
+          - list
+        apiGroups:
+          - management.loft.sh
+        resources:
+          - virtualclusterinstances

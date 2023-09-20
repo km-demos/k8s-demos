@@ -150,7 +150,7 @@ jobs:
             --create-namespace \
             --set admin.password=$LOFT_ADMIN_PASSWORD \
             --set ingress.host=$LOFT_HOST \
-            --set config.loftHost=$LOFT_HOST \
+            --set config.loftHost=https://$LOFT_HOST \
             --set config.auth.github.clientId=$LOFT_GITHUB_CLIENT_ID \
             --set config.auth.github.clientSecret=$LOFT_GITHUB_CLIENT_SECRET \
             --set config.auth.github.redirectURI=https://$LOFT_HOST/auth/github/callback \

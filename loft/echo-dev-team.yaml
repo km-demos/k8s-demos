@@ -10,6 +10,7 @@ spec:
     - km-demos:echo-app
   clusterRoles:
     - name: loft-management-project-viewer
+    - name: vcluster-instance-read
   access:
     - name: loft-access
       verbs:
