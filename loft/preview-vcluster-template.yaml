@@ -12,9 +12,8 @@ spec:
         loft.sh/import-argocd: 'true'
       annotations:
         sleepmode.loft.sh/delete-after: '72000'
-        sleepmode.loft.sh/sleep-after: '6000'
-        sleepmode.loft.sh/delete-after: '72000'
-        sleepmode.loft.sh/sleep-after: '6000'
+        loft.sh/require-ingress-authentication: 'true'
+        sleepmode.loft.sh/sleep-after: '600'
     objects: |
       apiVersion: v1
       kind: Namespace
