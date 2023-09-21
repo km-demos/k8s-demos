@@ -45,7 +45,7 @@ env:
 
 jobs:
   delete-argocd-echo-app-repo:
-    if: !(github.env.KEEP_REPO)
+    if: !github.env.KEEP_REPO
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
