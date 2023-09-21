@@ -1,10 +1,10 @@
 kind: ClusterRoleTemplate
 apiVersion: management.loft.sh/v1
 metadata:
-  name: vcluster-instance-read
+  name: vcluster-instance-use
 spec:
-  displayName: vcluster Read
-  description: Allows get, watch and list for all clusters in project.
+  displayName: vcluster use
+  description: Allows get, watch, list and use for all vclusters in project.
   owner:
     user: admin
   management: true
@@ -23,6 +23,7 @@ spec:
           - get
           - watch
           - list
+          - use
         apiGroups:
           - management.loft.sh
         resources:

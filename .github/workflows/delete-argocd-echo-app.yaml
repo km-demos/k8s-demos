@@ -121,5 +121,5 @@ jobs:
         kubectl delete projects.management.loft.sh preview
         kubectl delete virtualclustertemplates.management.loft.sh preview-template
         kubectl delete teams.management.loft.sh echo-dev 
-        kubectl delete clusterroletemplates.management.loft.sh vcluster-instance-read
+        kubectl delete clusterroletemplates.management.loft.sh vcluster-instance-use
         

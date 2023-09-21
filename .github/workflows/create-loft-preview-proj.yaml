@@ -28,7 +28,7 @@ jobs:
       - name: Create Preview Project
         run: |
           loft use management
-          kubectl apply -f ./loft/vcluster-read-role.yaml
+          kubectl apply -f ./loft/vcluster-use-role.yaml
           kubectl apply -f ./loft/echo-dev-team.yaml
           kubectl apply -f ./loft/preview-vcluster-template.yaml
           kubectl apply -f ./loft/preview-project.yaml
