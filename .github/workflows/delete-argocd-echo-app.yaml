@@ -34,11 +34,11 @@ on:
         - c
 
 env:
-  REPO_NAME: ${{ github.event.inputs.repo_name || 'echo-app' }}
-  KEEP_REPO: ${{ github.event.inputs.keep-repo || false }}
-  CLUSTER_NAME: ${{ github.event.inputs.cluster-name || 'k8s-demo-cluster' }}
-  GCP_REGION: ${{ github.event.inputs.gcp-region || 'us-east5' }}
-  GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
+  REPO_NAME: ${{ inputs.repo_name || 'echo-app' }}
+  KEEP_REPO: ${{ inputs.keep-repo || false }}
+  CLUSTER_NAME: ${{ inputs.cluster-name || 'k8s-demo-cluster' }}
+  GCP_REGION: ${{ inputs.gcp-region || 'us-east5' }}
+  GCP_ZONE: ${{ inputs.gcp-region || 'us-east5' }}-${{ inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   GCP_DNS_ZONE: k8s-kurt-madel
   LOFT_CLI_VERSION: ${{ inputs.loft-cli-version || 'v3.2.4' }}
@@ -117,7 +117,7 @@ jobs:
     - id: delete-loft-preview-demo-user
       run: |
         loft use management
-        kubectl delete users.management.loft.sh beedemo-dev
+        kubectl delete users.management.loft.sh beedemodeveloper
         kubectl delete projects.management.loft.sh preview
         kubectl delete virtualclustertemplates.management.loft.sh preview-template
         kubectl delete teams.management.loft.sh echo-dev 
