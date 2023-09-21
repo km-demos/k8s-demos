@@ -118,6 +118,7 @@ jobs:
       run: |
         loft use management
         kubectl delete users.management.loft.sh beedemodeveloper
+        kubectl delete projectsecret.management.loft.sh ghcr-login-secret
         kubectl delete projects.management.loft.sh preview
         kubectl delete virtualclustertemplates.management.loft.sh preview-template
         kubectl delete teams.management.loft.sh echo-dev 

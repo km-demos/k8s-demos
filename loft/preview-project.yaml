@@ -53,7 +53,6 @@ spec:
         - admin
       teams:
         - echo-dev
-        - km-demosecho-app
     - name: loft-admin-access
       verbs:
         - get
