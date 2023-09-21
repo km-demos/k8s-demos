@@ -10,6 +10,9 @@ on:
         type: boolean
         description: 'Do not delete repo'
         default: false
+      loft-cli-version:
+        description: 'Loft CLI version to use'
+        default: "v3.2.4"
       cluster-name:
         description: 'Name of GKE cluster to delete echo app from'
         default: "k8s-demo-cluster"
@@ -38,15 +41,17 @@ env:
   GCP_ZONE: ${{ github.event.inputs.gcp-region || 'us-east5' }}-${{ github.event.inputs.gcp-zone || 'a' }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   GCP_DNS_ZONE: k8s-kurt-madel
+  LOFT_CLI_VERSION: ${{ inputs.loft-cli-version || 'v3.2.4' }}
 
 jobs:
-  delete-argocd-echo-app:
+  delete-argocd-echo-app-repo:
+    if: !(github.env.KEEP_REPO)
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
       contents: read
     steps:
-    - name: checkout
+    - id: checkout
       uses: actions/checkout@v4
     - name: Generate km-demos GitHub App token
       id: generate_token
@@ -54,8 +59,7 @@ jobs:
       with:
           app_id: ${{ secrets.KM_DEMOS_GITHUB_APP_ID }}
           private_key: ${{ secrets.KM_DEMOS_GITHUB_APP_KEY }}
-    - name: github-cleanup
-      if: !(github.env.KEEP_REPO)
+    - id: github-cleanup
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
@@ -83,20 +87,7 @@ jobs:
         kubectl delete ns --ignore-not-found=true $REPO_NAME
         gcloud dns record-sets delete $REPO_NAME.k8s.kurtmadel.com. --type=A --zone=$GCP_DNS_ZONE --project=$GCP_PROJECT_ID
 
-    - name: Install Loft CLI
-      uses: loft-sh/setup-loft@v2
-      with:
-        version: ${{ env.LOFT_CLI_VERSION }}
-        url: ${{ secrets.LOFT_URL }}
-        # Specify your Loft access key here
-        access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
-
-    - name: Delete Loft Preview Demo User
-      run: |
-        loft use management
-        kubectl delete users.management.loft.sh beedemo-dev
-
-    - name: github-delete-package
+    - id: github-delete-package
       shell: bash
       run: |
         curl -L \
@@ -105,3 +96,30 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.DELETE_PACKAGES_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/orgs/km-demos/packages/container/$REPO_NAME
+
+  clean-up-loft:
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - id: install-loft-cli
+      uses: loft-sh/setup-loft@v2
+      with:
+        version: ${{ env.LOFT_CLI_VERSION }}
+        url: ${{ secrets.LOFT_URL }}
+        # Specify your Loft access key here
+        access-key: ${{ secrets.LOFT_DEV_CLUSTER_ACCESS_KEY }}
+
+    - id: delete-loft-preview-demo-user
+      run: |
+        loft use management
+        kubectl delete users.management.loft.sh beedemo-dev
+        kubectl delete projects.management.loft.sh preview
+        kubectl delete virtualclustertemplates.management.loft.sh preview-template
+        kubectl delete teams.management.loft.sh echo-dev 
+        kubectl delete clusterroletemplates.management.loft.sh vcluster-instance-read
+        

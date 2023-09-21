@@ -13,6 +13,24 @@ spec:
       annotations:
         sleepmode.loft.sh/delete-after: '72000'
         sleepmode.loft.sh/sleep-after: '6000'
+        sleepmode.loft.sh/delete-after: '72000'
+        sleepmode.loft.sh/sleep-after: '6000'
+    objects: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: preview-hello-world-app
+      ---
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: ghcr-login-secret
+        namespace: preview-hello-world-app
+        labels:
+          loft.sh/project-secret-name: ghcr-login-secret
+      data:
+        .dockerconfigjson: e30K
+      type: kubernetes.io/dockerconfigjson
     access:
       rules:
         - users:
