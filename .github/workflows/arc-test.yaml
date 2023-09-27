@@ -1,6 +1,13 @@
 name: Actions Runner Controller Demo
 on:
   workflow_dispatch:
+    inputs:
+      loft-cli-version:
+        description: 'Loft CLI version to use'
+        default: "v3.2.4"
+
+env:
+  LOFT_CLI_VERSION: ${{ inputs.loft-cli-version || 'v3.2.4' }}
 
 jobs:
   Explore-GitHub-Actions:
