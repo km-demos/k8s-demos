@@ -24,8 +24,9 @@ jobs:
         insecure: true
         # Specify your Loft access key here
         access-key: ${{ secrets.KUBEPI_LOFT_ACCESS_KEY }}
-    - name: Loft Connect Cluster
+
+    - name: Loft Use Cluster
       run: |
-        loft connect cluster loft-cluster
+        loft use cluster loft-cluster
         kubectl get pods -A
 
