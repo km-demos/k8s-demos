@@ -21,6 +21,7 @@ jobs:
       with:
         version: ${{ env.LOFT_CLI_VERSION }}
         url: https://loft.kubepi.cluster
+        insecure: true
         # Specify your Loft access key here
         access-key: ${{ secrets.KUBEPI_LOFT_ACCESS_KEY }}
 
