@@ -8,3 +8,12 @@ jobs:
     runs-on: arc-runner-set
     steps:
     - run: echo "Meg is awesome 🎉 This job uses runner scale set runners!"
+
+    - name: Install Loft CLI
+      uses: loft-sh/setup-loft@v2
+      with:
+        version: ${{ env.LOFT_CLI_VERSION }}
+        url: https://loft.kubepi.cluster
+        # Specify your Loft access key here
+        access-key: ${{ secrets.KUBEPI_LOFT_ACCESS_KEY }}
+
