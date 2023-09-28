@@ -25,8 +25,12 @@ jobs:
         # Specify your Loft access key here
         access-key: ${{ secrets.KUBEPI_LOFT_ACCESS_KEY }}
 
-    - name: Loft Use Cluster
+    - name: Create Preview Project
       run: |
-        loft use cluster loft-cluster
-        kubectl get pods -A
+        loft use management
+        kubectl apply -f ./loft/vcluster-use-role.yaml
+        kubectl apply -f ./loft/echo-dev-team.yaml
+        kubectl apply -f ./loft/preview-vcluster-template.yaml
+        kubectl apply -f ./loft/preview-project.yaml
+        kubectl apply -f ./loft/ghcr-login-projectsecret.yaml
 
