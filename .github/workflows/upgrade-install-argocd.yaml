@@ -33,7 +33,7 @@ jobs:
         uses: loft-sh/setup-loft@v2
         with:
           version: ${{ env.LOFT_CLI_VERSION }}
-          url: ${{ env.LOFT_URL }}
+          url: ${{ vars.LOFT_URL }}
           insecure: true
           # Specify your Loft access key here
           access-key: ${{ secrets.LOFT_ACCESS_KEY }}
