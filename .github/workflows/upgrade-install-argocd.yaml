@@ -37,7 +37,15 @@ jobs:
           insecure: true
           # Specify your Loft access key here
           access-key: ${{ secrets.LOFT_ACCESS_KEY }}
-      - id: use-cluster
+
+      - id: argocd-upgrade-install
         run: |
           loft use cluster loft-cluster
-          kubectl get pods -A
+          helm repo add argo https://argoproj.github.io/argo-helm
+          helm repo update
+          helm upgrade --install argocd argo/argo-cd \
+            -n argocd --create-namespace --version 5.42.2 --wait \
+            --set configs.secret.githubSecret=${{ secrets.ARGOCD_GITHUB_WEBHOOK_SECRET }} \
+            --set ingress.hosts[0].host=argocd.${{ vars.BASE_HOST }} \
+            --set ingress.tls[0].hosts[0]=argocd.${{ vars.BASE_HOST }} \
+            --values ./argo-cd/values.yaml
