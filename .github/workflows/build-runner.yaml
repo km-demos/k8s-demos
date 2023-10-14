@@ -1,4 +1,4 @@
-name: build-push-main
+name: build-push-actions-runner
 
 # on merge to main from pull request (recommended)
 on:
