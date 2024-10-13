@@ -4,7 +4,7 @@ metadata:
   name: vcluster-instance-use
 spec:
   displayName: vcluster use
-  description: Allows get, watch, list and use for all vclusters in project.
+  description: Allows get, watch, list and use for all vcluster instances in the project.
   owner:
     user: admin
   management: true
